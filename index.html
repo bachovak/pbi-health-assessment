@@ -585,11 +585,21 @@
                 <input type="text" id="companyName" placeholder="Enter your company name" required>
             </div>
             <div class="form-group">
-                <label for="clientEmail">Email (optional)</label>
-                <input type="email" id="clientEmail" placeholder="Enter your email">
+                <label for="clientEmail">Email *</label>
+                <input type="email" id="clientEmail" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group">
+                <label for="companySize">Company Size *</label>
+                <select id="companySize" required style="width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:8px;font-size:1rem;font-family:inherit;background:white;outline:none;">
+                    <option value="">Select company size...</option>
+                    <option value="1-50">1-50 employees</option>
+                    <option value="51-200">51-200 employees</option>
+                    <option value="201-1000">201-1,000 employees</option>
+                    <option value="1000+">1,000+ employees</option>
+                </select>
             </div>
 
-            <div class="validation-msg" id="welcomeError">Please fill in your name and company to continue.</div>
+            <div class="validation-msg" id="welcomeError">Please fill in all required fields to continue.</div>
 
             <div id="resumeSection" style="display:none; background:#e6f4ea; border:1px solid #0d904f; border-radius:8px; padding:16px; margin-bottom:20px;">
                 <strong style="color:#0d904f;">Saved progress found!</strong>
@@ -1322,6 +1332,7 @@ function startFresh() {
     document.getElementById("clientName").value = "";
     document.getElementById("companyName").value = "";
     document.getElementById("clientEmail").value = "";
+    document.getElementById("companySize").value = "";
 }
 
 function buildCategoryNav() {
@@ -1378,14 +1389,15 @@ function startAssessment() {
     const name = document.getElementById("clientName").value.trim();
     const company = document.getElementById("companyName").value.trim();
     const email = document.getElementById("clientEmail").value.trim();
+    const companySize = document.getElementById("companySize").value;
 
-    if (!name || !company) {
+    if (!name || !company || !email || !companySize) {
         document.getElementById("welcomeError").classList.add("show");
         return;
     }
 
     document.getElementById("welcomeError").classList.remove("show");
-    clientInfo = { name, company, email };
+    clientInfo = { name, company, email, companySize };
 
     showScreen("screen-assessment");
 }
@@ -1521,6 +1533,7 @@ function loadProgress() {
         document.getElementById("clientName").value = clientInfo.name || "";
         document.getElementById("companyName").value = clientInfo.company || "";
         document.getElementById("clientEmail").value = clientInfo.email || "";
+        document.getElementById("companySize").value = clientInfo.companySize || "";
 
         // Restore answers
         answers = data.answers;
@@ -1645,7 +1658,8 @@ function buildDataRows() {
             Timestamp: timestamp,
             ClientName: clientInfo.name,
             Company: clientInfo.company,
-            Email: clientInfo.email || "",
+            Email: clientInfo.email,
+            CompanySize: clientInfo.companySize,
             CategoryID: q.catId,
             Category: cat.name,
             Pillar: cat.pillar,
@@ -1708,6 +1722,7 @@ function restartAssessment() {
     document.getElementById("clientName").value = "";
     document.getElementById("companyName").value = "";
     document.getElementById("clientEmail").value = "";
+    document.getElementById("companySize").value = "";
 
     updateProgress();
     goToCategory(0);
