@@ -1,0 +1,1722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power BI Health Assessment</title>
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --primary-dark: #1557b0;
+            --primary-light: #e8f0fe;
+            --bg: #f8f9fa;
+            --card: #ffffff;
+            --text: #202124;
+            --text-secondary: #5f6368;
+            --border: #dadce0;
+            --success: #0d904f;
+            --success-bg: #e6f4ea;
+            --warning: #e37400;
+            --warning-bg: #fef7e0;
+            --error: #c5221f;
+            --shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08);
+            --shadow-lg: 0 4px 16px rgba(0,0,0,0.12);
+            --radius: 12px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+
+        /* Header */
+        .app-header {
+            background: linear-gradient(135deg, var(--primary) 0%, #4285f4 100%);
+            color: white;
+            padding: 32px 24px;
+            border-radius: var(--radius);
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+        }
+
+        .app-header h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .app-header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        /* Progress bar */
+        .progress-container {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 16px 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .progress-info strong { color: var(--text); }
+
+        .progress-bar-bg {
+            height: 8px;
+            background: #e8eaed;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #4285f4);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+            width: 0%;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 28px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .card h2 {
+            font-size: 1.25rem;
+            margin-bottom: 4px;
+            color: var(--primary);
+        }
+
+        .card .subtitle {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        /* Welcome form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.2s;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-primary:disabled { background: #94b8e8; cursor: not-allowed; }
+
+        .btn-secondary {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .btn-secondary:hover { background: #d2e3fc; }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover { background: #0b7a43; }
+
+        /* Category section */
+        .category-section {
+            display: none;
+        }
+
+        .category-section.active {
+            display: block;
+        }
+
+        .category-header {
+            background: var(--primary-light);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .category-header h2 {
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin-bottom: 2px;
+        }
+
+        .category-header .cat-meta {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Question card */
+        .question-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: border-color 0.2s;
+        }
+
+        .question-card.answered {
+            border-color: var(--success);
+            background: linear-gradient(to right, var(--success-bg) 0%, var(--card) 8%);
+        }
+
+        .question-card.unanswered-highlight {
+            border-color: var(--error);
+            animation: pulse-border 1s ease-in-out;
+        }
+
+        @keyframes pulse-border {
+            0%, 100% { border-color: var(--error); }
+            50% { border-color: #f8d7da; }
+        }
+
+        .question-title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .question-number {
+            color: var(--primary);
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .question-why {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            font-style: italic;
+        }
+
+        /* Radio options */
+        .options-list {
+            list-style: none;
+            margin-bottom: 16px;
+        }
+
+        .option-item {
+            margin-bottom: 8px;
+        }
+
+        .option-item label {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .option-item label:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .option-item input[type="radio"] {
+            margin-top: 3px;
+            accent-color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .option-item input[type="radio"]:checked + span {
+            font-weight: 500;
+        }
+
+        .option-item label:has(input:checked) {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        /* Score badge */
+        .score-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .score-1 { background: #fce8e6; color: #c5221f; }
+        .score-2 { background: #fef7e0; color: #e37400; }
+        .score-3 { background: #fff8e1; color: #f9a825; }
+        .score-4 { background: #e6f4ea; color: #0d904f; }
+        .score-5 { background: #e6f4ea; color: #0d904f; }
+
+        /* Comment box */
+        .comment-toggle {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-family: inherit;
+            padding: 4px 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .comment-toggle:hover { text-decoration: underline; }
+
+        .comment-box {
+            display: none;
+            margin-top: 12px;
+        }
+
+        .comment-box.show { display: block; }
+
+        .comment-box textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .comment-box textarea:focus {
+            border-color: var(--primary);
+        }
+
+        /* Navigation */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .nav-buttons .step-indicator {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Category nav pills */
+        .category-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+
+        .cat-pill {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid var(--border);
+            background: var(--card);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .cat-pill:hover { border-color: var(--primary); color: var(--primary); }
+        .cat-pill.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .cat-pill.complete { background: var(--success-bg); color: var(--success); border-color: var(--success); }
+
+        /* Thank you screen */
+        .thank-you {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .thank-you .check-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--success-bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: var(--success);
+        }
+
+        .thank-you h2 {
+            font-size: 1.5rem;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .thank-you p {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .download-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        /* Setup notice */
+        .setup-notice {
+            background: var(--warning-bg);
+            border: 1px solid #fdd663;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+        }
+
+        .setup-notice strong { color: var(--warning); }
+
+        /* Validation */
+        .validation-msg {
+            background: #fce8e6;
+            color: var(--error);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .validation-msg.show { display: block; }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container { padding: 12px 8px; }
+            .app-header { padding: 24px 16px; }
+            .app-header h1 { font-size: 1.4rem; }
+            .card { padding: 20px 16px; }
+            .question-card { padding: 16px; }
+            .option-item label { padding: 10px 12px; font-size: 0.85rem; }
+            .nav-buttons { flex-wrap: wrap; gap: 12px; }
+            .cat-pill { font-size: 0.75rem; padding: 5px 10px; }
+        }
+
+        /* Screen visibility */
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        /* Loading overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.85);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--border);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Save button */
+        .btn-save {
+            background: var(--success);
+            color: white;
+            padding: 8px 20px;
+            font-size: 0.875rem;
+        }
+
+        .btn-save:hover { background: #0b7a43; }
+
+        .save-inline {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .save-status {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .save-status.saved {
+            color: var(--success);
+        }
+
+        .nav-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Config section */
+        .config-section {
+            background: #f1f3f4;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+            font-size: 0.85rem;
+        }
+
+        .config-section input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            margin-top: 6px;
+            font-family: inherit;
+        }
+    </style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <p>Submitting your assessment...</p>
+</div>
+
+<div class="container">
+    <div class="app-header">
+        <h1>Power BI Health Assessment</h1>
+        <p>Evaluate your organization's Power BI maturity across 10 key dimensions</p>
+    </div>
+
+    <!-- SCREEN 1: Welcome -->
+    <div class="screen active" id="screen-welcome">
+        <div class="card">
+            <h2>Welcome</h2>
+            <p class="subtitle">Please provide your details to begin the assessment. This takes about 15-20 minutes to complete.</p>
+
+            <div class="form-group">
+                <label for="clientName">Full Name *</label>
+                <input type="text" id="clientName" placeholder="Enter your full name" required>
+            </div>
+            <div class="form-group">
+                <label for="companyName">Company *</label>
+                <input type="text" id="companyName" placeholder="Enter your company name" required>
+            </div>
+            <div class="form-group">
+                <label for="clientEmail">Email (optional)</label>
+                <input type="email" id="clientEmail" placeholder="Enter your email">
+            </div>
+
+            <div class="validation-msg" id="welcomeError">Please fill in your name and company to continue.</div>
+
+            <div id="resumeSection" style="display:none; background:#e6f4ea; border:1px solid #0d904f; border-radius:8px; padding:16px; margin-bottom:20px;">
+                <strong style="color:#0d904f;">Saved progress found!</strong>
+                <p id="resumeInfo" style="font-size:0.9rem; color:#5f6368; margin:8px 0;"></p>
+                <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                    <button class="btn btn-success" onclick="resumeAssessment()">Resume Assessment</button>
+                    <button class="btn btn-secondary" onclick="startFresh()">Start Fresh</button>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="startAssessment()">Start Assessment &rarr;</button>
+        </div>
+    </div>
+
+    <!-- SCREEN 2: Assessment -->
+    <div class="screen" id="screen-assessment">
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-info">
+                <span><strong id="progressText">0 of 50</strong> questions answered</span>
+                <span id="progressPercent">0%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div class="category-nav" id="categoryNav"></div>
+
+        <div id="categoryPanels"></div>
+
+        <div class="validation-msg" id="assessmentError">Please answer all questions before submitting.</div>
+
+        <div class="nav-buttons">
+            <button class="btn btn-secondary" id="btnPrev" onclick="navigateCategory(-1)">&larr; Previous</button>
+            <div class="nav-center">
+                <span class="step-indicator" id="stepIndicator"></span>
+                <div class="save-inline">
+                    <button class="btn btn-save" onclick="saveProgress()">Save Progress</button>
+                    <span class="save-status" id="saveStatus"></span>
+                </div>
+            </div>
+            <button class="btn btn-primary" id="btnNext" onclick="navigateCategory(1)">Next &rarr;</button>
+        </div>
+    </div>
+
+    <!-- SCREEN 3: Thank you -->
+    <div class="screen" id="screen-thankyou">
+        <div class="card thank-you">
+            <div class="check-icon">&#10003;</div>
+            <h2>Assessment Complete!</h2>
+            <p>Thank you, <strong id="thankName"></strong>. Your Power BI Health Assessment has been recorded.</p>
+            <div id="submitStatus" style="margin-bottom:20px;"></div>
+            <div class="download-actions">
+                <button class="btn btn-primary" onclick="restartAssessment()">Start New Assessment</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// ASSESSMENT DATA (extracted from Health Check Scoring Dimension)
+// ============================================================
+const categories = [
+    { id: "CAT01", name: "Business Alignment", pillar: "CoE" },
+    { id: "CAT02", name: "Workspace & Environment", pillar: "BI Ops" },
+    { id: "CAT03", name: "Data Modeling", pillar: "Reporting" },
+    { id: "CAT04", name: "Data Sources & Refresh", pillar: "BI Ops" },
+    { id: "CAT05", name: "Performance & Optimization", pillar: "Reporting" },
+    { id: "CAT06", name: "Security & Access Control", pillar: "BI Ops" },
+    { id: "CAT07", name: "Development Standards & Governance", pillar: "CoE" },
+    { id: "CAT08", name: "BI Operations", pillar: "BI Ops" },
+    { id: "CAT09", name: "Adoption & Enablement", pillar: "CoE" },
+    { id: "CAT10", name: "CoE Readiness", pillar: "CoE" }
+];
+
+const questions = [
+    {
+        qid: "BIZ01", catId: "CAT01", subcatId: "SUB01", subcategory: "Objectives",
+        question: "Power BI objectives clearly defined", weight: 3,
+        why: "Without objectives, reporting becomes reactive and misaligned",
+        options: [
+            { score: 1, vid: "BIZ01_S1", text: "We don't really have objectives, we just build what's requested", risk: 12, priority: "Fix now" },
+            { score: 2, vid: "BIZ01_S2", text: "We have a general idea, but nothing written down", risk: 9, priority: "Fix now" },
+            { score: 3, vid: "BIZ01_S3", text: "Some teams have objectives, others don't", risk: 6, priority: "Plan" },
+            { score: 4, vid: "BIZ01_S4", text: "We have documented objectives and usually follow them", risk: 3, priority: "Accept" },
+            { score: 5, vid: "BIZ01_S5", text: "Objectives are documented, reviewed, and aligned with strategy", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "BIZ02", catId: "CAT01", subcatId: "SUB02", subcategory: "Audiences",
+        question: "Target audiences clearly defined", weight: 2,
+        why: "Undefined audiences reduce adoption and clarity",
+        options: [
+            { score: 1, vid: "BIZ02_S1", text: "Reports are built for whoever needs them", risk: 8, priority: "Plan" },
+            { score: 2, vid: "BIZ02_S2", text: "We have an idea of users, but it's informal", risk: 6, priority: "Plan" },
+            { score: 3, vid: "BIZ02_S3", text: "Main audiences are defined for key reports", risk: 4, priority: "Accept" },
+            { score: 4, vid: "BIZ02_S4", text: "Each report has a clearly defined audience", risk: 2, priority: "Accept" },
+            { score: 5, vid: "BIZ02_S5", text: "Audiences are defined, validated, and reviewed regularly", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "BIZ03", catId: "CAT01", subcatId: "SUB03", subcategory: "KPIs",
+        question: "KPIs consistently defined", weight: 3,
+        why: "Inconsistent KPIs create trust and decision risk",
+        options: [
+            { score: 1, vid: "BIZ03_S1", text: "Different teams use different numbers", risk: 12, priority: "Fix now" },
+            { score: 2, vid: "BIZ03_S2", text: "We try to align, but definitions still vary", risk: 9, priority: "Fix now" },
+            { score: 3, vid: "BIZ03_S3", text: "Most KPIs are consistent, some aren't", risk: 6, priority: "Plan" },
+            { score: 4, vid: "BIZ03_S4", text: "KPIs are clearly defined and consistently used", risk: 3, priority: "Accept" },
+            { score: 5, vid: "BIZ03_S5", text: "KPIs are governed and centrally approved", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "BIZ04", catId: "CAT01", subcatId: "SUB04", subcategory: "Ownership",
+        question: "Business vs IT responsibilities clear", weight: 2,
+        why: "Unclear ownership slows delivery and accountability",
+        options: [
+            { score: 1, vid: "BIZ04_S1", text: "It's not really clear who owns what", risk: 8, priority: "Plan" },
+            { score: 2, vid: "BIZ04_S2", text: "We kind of know, but it depends", risk: 6, priority: "Plan" },
+            { score: 3, vid: "BIZ04_S3", text: "Responsibilities are clear for most cases", risk: 4, priority: "Accept" },
+            { score: 4, vid: "BIZ04_S4", text: "Roles and responsibilities are well defined", risk: 2, priority: "Accept" },
+            { score: 5, vid: "BIZ04_S5", text: "Roles are documented and understood by everyone", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "BIZ05", catId: "CAT01", subcatId: "SUB05", subcategory: "Demand",
+        question: "Reporting demand prioritized", weight: 2,
+        why: "Lack of prioritization causes overload and frustration",
+        options: [
+            { score: 1, vid: "BIZ05_S1", text: "We handle requests as they come", risk: 8, priority: "Plan" },
+            { score: 2, vid: "BIZ05_S2", text: "We try to prioritize, but it's ad hoc", risk: 6, priority: "Plan" },
+            { score: 3, vid: "BIZ05_S3", text: "Some prioritization exists for major requests", risk: 4, priority: "Accept" },
+            { score: 4, vid: "BIZ05_S4", text: "Requests are prioritized using clear criteria", risk: 2, priority: "Accept" },
+            { score: 5, vid: "BIZ05_S5", text: "Formal intake and prioritization process exists", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "ENV01", catId: "CAT02", subcatId: "SUB06", subcategory: "Naming",
+        question: "Workspace naming convention", weight: 1,
+        why: "Naming consistency supports scale and clarity",
+        options: [
+            { score: 1, vid: "ENV01_S1", text: "Everyone names workspaces their own way", risk: 4, priority: "Accept" },
+            { score: 2, vid: "ENV01_S2", text: "Some naming rules exist but aren't enforced", risk: 3, priority: "Accept" },
+            { score: 3, vid: "ENV01_S3", text: "Most workspaces follow a convention", risk: 2, priority: "Accept" },
+            { score: 4, vid: "ENV01_S4", text: "Naming conventions are consistently applied", risk: 1, priority: "Accept" },
+            { score: 5, vid: "ENV01_S5", text: "Naming is standardized and enforced automatically", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "ENV02", catId: "CAT02", subcatId: "SUB07", subcategory: "Environments",
+        question: "Dev/Test/Prod separation", weight: 3,
+        why: "No separation risks breaking production",
+        options: [
+            { score: 1, vid: "ENV02_S1", text: "Everything is built directly in production", risk: 12, priority: "Fix now" },
+            { score: 2, vid: "ENV02_S2", text: "We sometimes copy things to test", risk: 9, priority: "Fix now" },
+            { score: 3, vid: "ENV02_S3", text: "Some projects have separation", risk: 6, priority: "Plan" },
+            { score: 4, vid: "ENV02_S4", text: "All projects have Dev and Prod", risk: 3, priority: "Accept" },
+            { score: 5, vid: "ENV02_S5", text: "Dev/Test/Prod with controlled deployments", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "ENV03", catId: "CAT02", subcatId: "SUB08", subcategory: "Ownership",
+        question: "Workspace ownership defined", weight: 2,
+        why: "Ownership prevents orphaned assets",
+        options: [
+            { score: 1, vid: "ENV03_S1", text: "No one really owns the workspace", risk: 8, priority: "Plan" },
+            { score: 2, vid: "ENV03_S2", text: "Ownership exists but isn't formal", risk: 6, priority: "Plan" },
+            { score: 3, vid: "ENV03_S3", text: "Most workspaces have an owner", risk: 4, priority: "Accept" },
+            { score: 4, vid: "ENV03_S4", text: "Each workspace has a clear owner", risk: 2, priority: "Accept" },
+            { score: 5, vid: "ENV03_S5", text: "Ownership is documented and reviewed", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "ENV04", catId: "CAT02", subcatId: "SUB09", subcategory: "Governance",
+        question: "Workspace creation controlled", weight: 2,
+        why: "Uncontrolled creation leads to sprawl",
+        options: [
+            { score: 1, vid: "ENV04_S1", text: "Anyone can create workspaces", risk: 8, priority: "Plan" },
+            { score: 2, vid: "ENV04_S2", text: "Creation is mostly open", risk: 6, priority: "Plan" },
+            { score: 3, vid: "ENV04_S3", text: "Some restrictions exist", risk: 4, priority: "Accept" },
+            { score: 4, vid: "ENV04_S4", text: "Workspace creation is controlled", risk: 2, priority: "Accept" },
+            { score: 5, vid: "ENV04_S5", text: "Creation follows a governed approval process", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "ENV05", catId: "CAT02", subcatId: "SUB10", subcategory: "Production Usage",
+        question: "No production in My Workspace", weight: 3,
+        why: "My Workspace use is a major operational risk",
+        options: [
+            { score: 1, vid: "ENV05_S1", text: "Critical reports live in My Workspace", risk: 12, priority: "Fix now" },
+            { score: 2, vid: "ENV05_S2", text: "Some important reports are still there", risk: 9, priority: "Fix now" },
+            { score: 3, vid: "ENV05_S3", text: "Most production reports are properly located", risk: 6, priority: "Plan" },
+            { score: 4, vid: "ENV05_S4", text: "Production reports are never in My Workspace", risk: 3, priority: "Accept" },
+            { score: 5, vid: "ENV05_S5", text: "This is enforced and audited", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "MOD01", catId: "CAT03", subcatId: "SUB11", subcategory: "Schema Design",
+        question: "Star schema usage", weight: 3,
+        why: "Star schemas are foundational for performance and scalability",
+        options: [
+            { score: 1, vid: "MOD01_S1", text: "Models are built however works at the time", risk: 12, priority: "Fix now" },
+            { score: 2, vid: "MOD01_S2", text: "We sometimes use star schemas", risk: 9, priority: "Fix now" },
+            { score: 3, vid: "MOD01_S3", text: "Most models follow a star schema", risk: 6, priority: "Plan" },
+            { score: 4, vid: "MOD01_S4", text: "Star schema is our standard", risk: 3, priority: "Accept" },
+            { score: 5, vid: "MOD01_S5", text: "Models are reviewed for schema quality", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "MOD02", catId: "CAT03", subcatId: "SUB12", subcategory: "Reuse",
+        question: "Shared datasets used", weight: 3,
+        why: "Lack of reuse causes duplication and inconsistency",
+        options: [
+            { score: 1, vid: "MOD02_S1", text: "Each report has its own dataset", risk: 12, priority: "Fix now" },
+            { score: 2, vid: "MOD02_S2", text: "Some datasets are reused accidentally", risk: 9, priority: "Fix now" },
+            { score: 3, vid: "MOD02_S3", text: "Core reports share datasets", risk: 6, priority: "Plan" },
+            { score: 4, vid: "MOD02_S4", text: "Shared datasets are the default", risk: 3, priority: "Accept" },
+            { score: 5, vid: "MOD02_S5", text: "Governed semantic layer strategy exists", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "MOD03", catId: "CAT03", subcatId: "SUB13", subcategory: "Measures",
+        question: "Measures centralized and documented", weight: 2,
+        why: "Central measures improve trust and reuse",
+        options: [
+            { score: 1, vid: "MOD03_S1", text: "Measures are created inside reports", risk: 8, priority: "Plan" },
+            { score: 2, vid: "MOD03_S2", text: "Some shared measures exist", risk: 6, priority: "Plan" },
+            { score: 3, vid: "MOD03_S3", text: "Important measures are centralized", risk: 4, priority: "Accept" },
+            { score: 4, vid: "MOD03_S4", text: "Measures are centralized and documented", risk: 2, priority: "Accept" },
+            { score: 5, vid: "MOD03_S5", text: "Measures follow a formal lifecycle", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "MOD04", catId: "CAT03", subcatId: "SUB14", subcategory: "Optimization",
+        question: "Model size optimized", weight: 2,
+        why: "Large models impact refresh and performance",
+        options: [
+            { score: 1, vid: "MOD04_S1", text: "We import everything", risk: 8, priority: "Plan" },
+            { score: 2, vid: "MOD04_S2", text: "Some columns are removed", risk: 6, priority: "Plan" },
+            { score: 3, vid: "MOD04_S3", text: "Most models are reasonably optimized", risk: 4, priority: "Accept" },
+            { score: 4, vid: "MOD04_S4", text: "Models are actively optimized", risk: 2, priority: "Accept" },
+            { score: 5, vid: "MOD04_S5", text: "Optimization is reviewed regularly", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "MOD05", catId: "CAT03", subcatId: "SUB15", subcategory: "Relationships",
+        question: "Relationships correctly defined", weight: 2,
+        why: "Incorrect relationships produce wrong results",
+        options: [
+            { score: 1, vid: "MOD05_S1", text: "Relationships are trial and error", risk: 8, priority: "Plan" },
+            { score: 2, vid: "MOD05_S2", text: "Some relationships are unclear", risk: 6, priority: "Plan" },
+            { score: 3, vid: "MOD05_S3", text: "Most relationships are correct", risk: 4, priority: "Accept" },
+            { score: 4, vid: "MOD05_S4", text: "Relationships are clearly defined", risk: 2, priority: "Accept" },
+            { score: 5, vid: "MOD05_S5", text: "Relationships are validated and documented", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "REF01", catId: "CAT04", subcatId: "SUB16", subcategory: "Data Inventory",
+        question: "Data sources documented", weight: 2,
+        why: "Documentation enables support, ownership, and continuity",
+        options: [
+            { score: 1, vid: "REF01_S1", text: "We don't have a list of data sources", risk: 8, priority: "Plan" },
+            { score: 2, vid: "REF01_S2", text: "Some documentation exists", risk: 6, priority: "Plan" },
+            { score: 3, vid: "REF01_S3", text: "Key data sources are documented", risk: 4, priority: "Accept" },
+            { score: 4, vid: "REF01_S4", text: "All data sources are documented", risk: 2, priority: "Accept" },
+            { score: 5, vid: "REF01_S5", text: "Documentation is maintained and reviewed", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "REF02", catId: "CAT04", subcatId: "SUB17", subcategory: "Gateway",
+        question: "Gateway configured and monitored", weight: 3,
+        why: "Gateway failures stop reporting entirely",
+        options: [
+            { score: 1, vid: "REF02_S1", text: "We only notice issues when refresh fails", risk: 12, priority: "Fix now" },
+            { score: 2, vid: "REF02_S2", text: "Gateway exists but isn't monitored", risk: 9, priority: "Fix now" },
+            { score: 3, vid: "REF02_S3", text: "Basic monitoring is in place", risk: 6, priority: "Plan" },
+            { score: 4, vid: "REF02_S4", text: "Gateway is actively monitored", risk: 3, priority: "Accept" },
+            { score: 5, vid: "REF02_S5", text: "Gateway health is proactively managed", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "REF03", catId: "CAT04", subcatId: "SUB18", subcategory: "Refresh Strategy",
+        question: "Refresh schedules meet business needs", weight: 2,
+        why: "Late or infrequent refresh impacts decision-making",
+        options: [
+            { score: 1, vid: "REF03_S1", text: "Refresh timing is random", risk: 8, priority: "Plan" },
+            { score: 2, vid: "REF03_S2", text: "Some reports refresh too late", risk: 6, priority: "Plan" },
+            { score: 3, vid: "REF03_S3", text: "Most refreshes meet business needs", risk: 4, priority: "Accept" },
+            { score: 4, vid: "REF03_S4", text: "Refresh aligns with business needs", risk: 2, priority: "Accept" },
+            { score: 5, vid: "REF03_S5", text: "Refresh is optimized and reviewed regularly", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "REF04", catId: "CAT04", subcatId: "SUB19", subcategory: "Scalability",
+        question: "Incremental refresh used where applicable", weight: 3,
+        why: "Incremental refresh is critical for scalability",
+        options: [
+            { score: 1, vid: "REF04_S1", text: "We don't use incremental refresh", risk: 12, priority: "Fix now" },
+            { score: 2, vid: "REF04_S2", text: "We tried it once", risk: 9, priority: "Fix now" },
+            { score: 3, vid: "REF04_S3", text: "Some large datasets use it", risk: 6, priority: "Plan" },
+            { score: 4, vid: "REF04_S4", text: "Incremental refresh is standard", risk: 3, priority: "Accept" },
+            { score: 5, vid: "REF04_S5", text: "Incremental refresh is optimized and monitored", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "REF05", catId: "CAT04", subcatId: "SUB20", subcategory: "Credentials",
+        question: "Credentials not tied to individuals", weight: 3,
+        why: "Personal credentials are a security and operational risk",
+        options: [
+            { score: 1, vid: "REF05_S1", text: "Refresh uses personal accounts", risk: 12, priority: "Fix now" },
+            { score: 2, vid: "REF05_S2", text: "Some shared accounts exist", risk: 9, priority: "Fix now" },
+            { score: 3, vid: "REF05_S3", text: "Most credentials are service-based", risk: 6, priority: "Plan" },
+            { score: 4, vid: "REF05_S4", text: "All credentials are service-based", risk: 3, priority: "Accept" },
+            { score: 5, vid: "REF05_S5", text: "Credential management is governed", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "PERF01", catId: "CAT05", subcatId: "SUB21", subcategory: "Performance",
+        question: "Report performance acceptable", weight: 3,
+        why: "Slow reports reduce adoption and trust",
+        options: [
+            { score: 1, vid: "PERF01_S1", text: "Reports are often slow", risk: 12, priority: "Fix now" },
+            { score: 2, vid: "PERF01_S2", text: "Some reports are slow", risk: 9, priority: "Fix now" },
+            { score: 3, vid: "PERF01_S3", text: "Performance is acceptable most of the time", risk: 6, priority: "Plan" },
+            { score: 4, vid: "PERF01_S4", text: "Reports load quickly", risk: 3, priority: "Accept" },
+            { score: 5, vid: "PERF01_S5", text: "Performance is actively monitored", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "PERF02", catId: "CAT05", subcatId: "SUB22", subcategory: "DAX Quality",
+        question: "DAX best practices followed", weight: 2,
+        why: "Poor DAX affects performance and maintainability",
+        options: [
+            { score: 1, vid: "PERF02_S1", text: "DAX is trial and error", risk: 8, priority: "Plan" },
+            { score: 2, vid: "PERF02_S2", text: "Some best practices are used", risk: 6, priority: "Plan" },
+            { score: 3, vid: "PERF02_S3", text: "Most measures follow good practices", risk: 4, priority: "Accept" },
+            { score: 4, vid: "PERF02_S4", text: "DAX follows defined standards", risk: 2, priority: "Accept" },
+            { score: 5, vid: "PERF02_S5", text: "DAX is reviewed and optimized", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "PERF03", catId: "CAT05", subcatId: "SUB23", subcategory: "UX & Visuals",
+        question: "Visuals optimized and purposeful", weight: 2,
+        why: "Too many visuals impact UX and performance",
+        options: [
+            { score: 1, vid: "PERF03_S1", text: "We add visuals freely", risk: 8, priority: "Plan" },
+            { score: 2, vid: "PERF03_S2", text: "Some reports are cluttered", risk: 6, priority: "Plan" },
+            { score: 3, vid: "PERF03_S3", text: "Most visuals are purposeful", risk: 4, priority: "Accept" },
+            { score: 4, vid: "PERF03_S4", text: "Visuals follow UX guidelines", risk: 2, priority: "Accept" },
+            { score: 5, vid: "PERF03_S5", text: "UX is reviewed with users", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "PERF04", catId: "CAT05", subcatId: "SUB24", subcategory: "Query Performance",
+        question: "Query folding preserved", weight: 2,
+        why: "Broken folding increases refresh time and load",
+        options: [
+            { score: 1, vid: "PERF04_S1", text: "We don't check query folding", risk: 8, priority: "Plan" },
+            { score: 2, vid: "PERF04_S2", text: "We're aware of it", risk: 6, priority: "Plan" },
+            { score: 3, vid: "PERF04_S3", text: "We try to preserve it", risk: 4, priority: "Accept" },
+            { score: 4, vid: "PERF04_S4", text: "Query folding is standard", risk: 2, priority: "Accept" },
+            { score: 5, vid: "PERF04_S5", text: "Folding is validated regularly", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "PERF05", catId: "CAT05", subcatId: "SUB25", subcategory: "Storage Mode",
+        question: "Storage mode appropriate", weight: 2,
+        why: "Incorrect storage mode causes performance issues",
+        options: [
+            { score: 1, vid: "PERF05_S1", text: "We use DirectQuery by default", risk: 8, priority: "Plan" },
+            { score: 2, vid: "PERF05_S2", text: "Storage mode choices are unclear", risk: 6, priority: "Plan" },
+            { score: 3, vid: "PERF05_S3", text: "Storage mode is usually correct", risk: 4, priority: "Accept" },
+            { score: 4, vid: "PERF05_S4", text: "Storage mode is chosen intentionally", risk: 2, priority: "Accept" },
+            { score: 5, vid: "PERF05_S5", text: "Storage mode is reviewed per use case", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "SEC01", catId: "CAT06", subcatId: "SUB26", subcategory: "Access Management",
+        question: "Least privilege access applied", weight: 3,
+        why: "Excess access increases data exposure risk",
+        options: [
+            { score: 1, vid: "SEC01_S1", text: "Many people are admins", risk: 12, priority: "Fix now" },
+            { score: 2, vid: "SEC01_S2", text: "Access is mostly open", risk: 9, priority: "Fix now" },
+            { score: 3, vid: "SEC01_S3", text: "Some restriction exists", risk: 6, priority: "Plan" },
+            { score: 4, vid: "SEC01_S4", text: "Access follows least privilege", risk: 3, priority: "Accept" },
+            { score: 5, vid: "SEC01_S5", text: "Access is reviewed regularly", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "SEC02", catId: "CAT06", subcatId: "SUB27", subcategory: "Row-Level Security",
+        question: "RLS implemented and tested", weight: 3,
+        why: "Missing RLS is a regulatory and trust risk",
+        options: [
+            { score: 1, vid: "SEC02_S1", text: "Everyone sees everything", risk: 12, priority: "Fix now" },
+            { score: 2, vid: "SEC02_S2", text: "Some reports have RLS", risk: 9, priority: "Fix now" },
+            { score: 3, vid: "SEC02_S3", text: "RLS exists but isn't tested regularly", risk: 6, priority: "Plan" },
+            { score: 4, vid: "SEC02_S4", text: "RLS is applied and tested before release", risk: 3, priority: "Accept" },
+            { score: 5, vid: "SEC02_S5", text: "RLS is audited and governed", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "SEC03", catId: "CAT06", subcatId: "SUB28", subcategory: "Admin Rights",
+        question: "Admin access limited", weight: 2,
+        why: "Too many admins reduce control and auditability",
+        options: [
+            { score: 1, vid: "SEC03_S1", text: "Many global admins", risk: 8, priority: "Plan" },
+            { score: 2, vid: "SEC03_S2", text: "Admins are not reviewed", risk: 6, priority: "Plan" },
+            { score: 3, vid: "SEC03_S3", text: "Admin access is mostly controlled", risk: 4, priority: "Accept" },
+            { score: 4, vid: "SEC03_S4", text: "Admin access is restricted", risk: 2, priority: "Accept" },
+            { score: 5, vid: "SEC03_S5", text: "Admin access is audited", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "SEC04", catId: "CAT06", subcatId: "SUB29", subcategory: "External Sharing",
+        question: "External sharing controlled", weight: 2,
+        why: "Uncontrolled sharing risks data leakage",
+        options: [
+            { score: 1, vid: "SEC04_S1", text: "Anyone can share externally", risk: 8, priority: "Plan" },
+            { score: 2, vid: "SEC04_S2", text: "Sharing is loosely controlled", risk: 6, priority: "Plan" },
+            { score: 3, vid: "SEC04_S3", text: "Some controls exist", risk: 4, priority: "Accept" },
+            { score: 4, vid: "SEC04_S4", text: "External sharing is restricted", risk: 2, priority: "Accept" },
+            { score: 5, vid: "SEC04_S5", text: "External sharing is governed and logged", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "SEC05", catId: "CAT06", subcatId: "SUB30", subcategory: "Data Classification",
+        question: "Sensitivity labels applied", weight: 1,
+        why: "Labels help classify and protect sensitive data",
+        options: [
+            { score: 1, vid: "SEC05_S1", text: "We don't use labels", risk: 4, priority: "Accept" },
+            { score: 2, vid: "SEC05_S2", text: "Some reports have labels", risk: 3, priority: "Accept" },
+            { score: 3, vid: "SEC05_S3", text: "Important reports are labeled", risk: 2, priority: "Accept" },
+            { score: 4, vid: "SEC05_S4", text: "Labels are applied consistently", risk: 1, priority: "Accept" },
+            { score: 5, vid: "SEC05_S5", text: "Labeling is enforced", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "GOV01", catId: "CAT07", subcatId: "SUB31", subcategory: "Standards",
+        question: "Development standards documented", weight: 3,
+        why: "Without standards, scaling leads to inconsistency and rework",
+        options: [
+            { score: 1, vid: "GOV01_S1", text: "Everyone builds their own way", risk: 12, priority: "Fix now" },
+            { score: 2, vid: "GOV01_S2", text: "Some guidelines exist", risk: 9, priority: "Fix now" },
+            { score: 3, vid: "GOV01_S3", text: "Standards exist but aren't always followed", risk: 6, priority: "Plan" },
+            { score: 4, vid: "GOV01_S4", text: "Standards are followed", risk: 3, priority: "Accept" },
+            { score: 5, vid: "GOV01_S5", text: "Standards are enforced and reviewed", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "GOV02", catId: "CAT07", subcatId: "SUB32", subcategory: "Version Control",
+        question: "Version control strategy exists", weight: 2,
+        why: "Lack of versioning increases error and rollback risk",
+        options: [
+            { score: 1, vid: "GOV02_S1", text: "We overwrite files", risk: 8, priority: "Plan" },
+            { score: 2, vid: "GOV02_S2", text: "We save copies manually", risk: 6, priority: "Plan" },
+            { score: 3, vid: "GOV02_S3", text: "Some versioning exists", risk: 4, priority: "Accept" },
+            { score: 4, vid: "GOV02_S4", text: "Version control is standard", risk: 2, priority: "Accept" },
+            { score: 5, vid: "GOV02_S5", text: "Version control is integrated into delivery", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "GOV03", catId: "CAT07", subcatId: "SUB33", subcategory: "Deployment",
+        question: "Deployment process defined", weight: 3,
+        why: "Uncontrolled deployments risk breaking production",
+        options: [
+            { score: 1, vid: "GOV03_S1", text: "We publish directly to production", risk: 12, priority: "Fix now" },
+            { score: 2, vid: "GOV03_S2", text: "Deployments are manual and inconsistent", risk: 9, priority: "Fix now" },
+            { score: 3, vid: "GOV03_S3", text: "Some structure exists for deployments", risk: 6, priority: "Plan" },
+            { score: 4, vid: "GOV03_S4", text: "Deployments follow a defined process", risk: 3, priority: "Accept" },
+            { score: 5, vid: "GOV03_S5", text: "Deployments are automated", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "GOV04", catId: "CAT07", subcatId: "SUB34", subcategory: "Change Management",
+        question: "Changes are communicated", weight: 2,
+        why: "Uncommunicated changes disrupt business users",
+        options: [
+            { score: 1, vid: "GOV04_S1", text: "Users are surprised by changes", risk: 8, priority: "Plan" },
+            { score: 2, vid: "GOV04_S2", text: "We sometimes inform users", risk: 6, priority: "Plan" },
+            { score: 3, vid: "GOV04_S3", text: "Major changes are communicated", risk: 4, priority: "Accept" },
+            { score: 4, vid: "GOV04_S4", text: "Changes are always communicated", risk: 2, priority: "Accept" },
+            { score: 5, vid: "GOV04_S5", text: "Formal change management process exists", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "GOV05", catId: "CAT07", subcatId: "SUB35", subcategory: "Quality Control",
+        question: "Peer review process exists", weight: 1,
+        why: "Peer review improves quality but is not blocking",
+        options: [
+            { score: 1, vid: "GOV05_S1", text: "No reviews are done", risk: 4, priority: "Accept" },
+            { score: 2, vid: "GOV05_S2", text: "Occasional informal reviews", risk: 3, priority: "Accept" },
+            { score: 3, vid: "GOV05_S3", text: "Some peer review exists", risk: 2, priority: "Accept" },
+            { score: 4, vid: "GOV05_S4", text: "Peer review is standard practice", risk: 1, priority: "Accept" },
+            { score: 5, vid: "GOV05_S5", text: "Peer review is mandatory", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "OPS01", catId: "CAT08", subcatId: "SUB36", subcategory: "Ownership",
+        question: "Dataset ownership clearly defined", weight: 3,
+        why: "Lack of ownership leads to orphaned and fragile assets",
+        options: [
+            { score: 1, vid: "OPS01_S1", text: "No clear owner exists", risk: 12, priority: "Fix now" },
+            { score: 2, vid: "OPS01_S2", text: "Ownership is informal", risk: 9, priority: "Fix now" },
+            { score: 3, vid: "OPS01_S3", text: "Most datasets have owners", risk: 6, priority: "Plan" },
+            { score: 4, vid: "OPS01_S4", text: "Ownership is clearly defined", risk: 3, priority: "Accept" },
+            { score: 5, vid: "OPS01_S5", text: "Ownership is documented and reviewed", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "OPS02", catId: "CAT08", subcatId: "SUB37", subcategory: "Monitoring",
+        question: "Usage and refresh monitored", weight: 3,
+        why: "Lack of monitoring prevents proactive issue resolution",
+        options: [
+            { score: 1, vid: "OPS02_S1", text: "We react when users complain", risk: 12, priority: "Fix now" },
+            { score: 2, vid: "OPS02_S2", text: "We check manually when needed", risk: 9, priority: "Fix now" },
+            { score: 3, vid: "OPS02_S3", text: "We review metrics occasionally", risk: 6, priority: "Plan" },
+            { score: 4, vid: "OPS02_S4", text: "Monitoring is regular", risk: 3, priority: "Accept" },
+            { score: 5, vid: "OPS02_S5", text: "Monitoring is proactive and automated", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "OPS03", catId: "CAT08", subcatId: "SUB38", subcategory: "Lifecycle Management",
+        question: "Obsolete reports retired", weight: 2,
+        why: "Old reports increase confusion and maintenance cost",
+        options: [
+            { score: 1, vid: "OPS03_S1", text: "Old reports stay forever", risk: 8, priority: "Plan" },
+            { score: 2, vid: "OPS03_S2", text: "We rarely remove reports", risk: 6, priority: "Plan" },
+            { score: 3, vid: "OPS03_S3", text: "Some cleanup happens", risk: 4, priority: "Accept" },
+            { score: 4, vid: "OPS03_S4", text: "Reports are regularly reviewed", risk: 2, priority: "Accept" },
+            { score: 5, vid: "OPS03_S5", text: "Formal lifecycle management exists", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "OPS04", catId: "CAT08", subcatId: "SUB39", subcategory: "Incident Management",
+        question: "Incident response process exists", weight: 2,
+        why: "Slow response increases downtime and user impact",
+        options: [
+            { score: 1, vid: "OPS04_S1", text: "No defined response process", risk: 8, priority: "Plan" },
+            { score: 2, vid: "OPS04_S2", text: "We react ad hoc", risk: 6, priority: "Plan" },
+            { score: 3, vid: "OPS04_S3", text: "Some process exists", risk: 4, priority: "Accept" },
+            { score: 4, vid: "OPS04_S4", text: "Incidents follow a defined process", risk: 2, priority: "Accept" },
+            { score: 5, vid: "OPS04_S5", text: "Incidents are tracked and reviewed", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "OPS05", catId: "CAT08", subcatId: "SUB40", subcategory: "Licensing",
+        question: "Licensing strategy understood", weight: 1,
+        why: "Poor licensing leads to unnecessary cost or constraints",
+        options: [
+            { score: 1, vid: "OPS05_S1", text: "We're not sure what licenses we need", risk: 4, priority: "Accept" },
+            { score: 2, vid: "OPS05_S2", text: "Licenses were bought ad hoc", risk: 3, priority: "Accept" },
+            { score: 3, vid: "OPS05_S3", text: "Licensing mostly fits usage", risk: 2, priority: "Accept" },
+            { score: 4, vid: "OPS05_S4", text: "Licensing is optimized", risk: 1, priority: "Accept" },
+            { score: 5, vid: "OPS05_S5", text: "Licensing is reviewed strategically", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "ADP01", catId: "CAT09", subcatId: "SUB41", subcategory: "Training",
+        question: "Users receive Power BI training", weight: 2,
+        why: "Lack of training limits adoption and self-service",
+        options: [
+            { score: 1, vid: "ADP01_S1", text: "No formal training is provided", risk: 8, priority: "Plan" },
+            { score: 2, vid: "ADP01_S2", text: "Some informal help exists", risk: 6, priority: "Plan" },
+            { score: 3, vid: "ADP01_S3", text: "Basic training exists", risk: 4, priority: "Accept" },
+            { score: 4, vid: "ADP01_S4", text: "Regular training sessions are held", risk: 2, priority: "Accept" },
+            { score: 5, vid: "ADP01_S5", text: "Continuous enablement program exists", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "ADP02", catId: "CAT09", subcatId: "SUB42", subcategory: "Documentation",
+        question: "Documentation accessible", weight: 1,
+        why: "Poor documentation slows usage and support",
+        options: [
+            { score: 1, vid: "ADP02_S1", text: "No documentation exists", risk: 4, priority: "Accept" },
+            { score: 2, vid: "ADP02_S2", text: "Some documents exist but are hard to find", risk: 3, priority: "Accept" },
+            { score: 3, vid: "ADP02_S3", text: "Key documentation exists", risk: 2, priority: "Accept" },
+            { score: 4, vid: "ADP02_S4", text: "Documentation is easy to find", risk: 1, priority: "Accept" },
+            { score: 5, vid: "ADP02_S5", text: "Documentation is maintained and updated", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "ADP03", catId: "CAT09", subcatId: "SUB43", subcategory: "Support",
+        question: "Clear support channels exist", weight: 2,
+        why: "Unclear support increases frustration and delays",
+        options: [
+            { score: 1, vid: "ADP03_S1", text: "Users message whoever they know", risk: 8, priority: "Plan" },
+            { score: 2, vid: "ADP03_S2", text: "Support is informal", risk: 6, priority: "Plan" },
+            { score: 3, vid: "ADP03_S3", text: "Some support structure exists", risk: 4, priority: "Accept" },
+            { score: 4, vid: "ADP03_S4", text: "Clear support channels are defined", risk: 2, priority: "Accept" },
+            { score: 5, vid: "ADP03_S5", text: "Support SLAs exist", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "ADP04", catId: "CAT09", subcatId: "SUB44", subcategory: "Feedback",
+        question: "User feedback collected", weight: 1,
+        why: "Feedback enables continuous improvement",
+        options: [
+            { score: 1, vid: "ADP04_S1", text: "We don't collect feedback", risk: 4, priority: "Accept" },
+            { score: 2, vid: "ADP04_S2", text: "Feedback is ad hoc", risk: 3, priority: "Accept" },
+            { score: 3, vid: "ADP04_S3", text: "Some feedback is collected", risk: 2, priority: "Accept" },
+            { score: 4, vid: "ADP04_S4", text: "Feedback is structured", risk: 1, priority: "Accept" },
+            { score: 5, vid: "ADP04_S5", text: "Feedback drives improvements", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "ADP05", catId: "CAT09", subcatId: "SUB45", subcategory: "Adoption Metrics",
+        question: "Adoption metrics tracked", weight: 2,
+        why: "Without metrics, adoption cannot be improved",
+        options: [
+            { score: 1, vid: "ADP05_S1", text: "We don't track usage", risk: 8, priority: "Plan" },
+            { score: 2, vid: "ADP05_S2", text: "We occasionally check usage", risk: 6, priority: "Plan" },
+            { score: 3, vid: "ADP05_S3", text: "Usage metrics are reviewed", risk: 4, priority: "Accept" },
+            { score: 4, vid: "ADP05_S4", text: "Adoption is actively tracked", risk: 2, priority: "Accept" },
+            { score: 5, vid: "ADP05_S5", text: "Metrics drive decisions", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "COE01", catId: "CAT10", subcatId: "SUB46", subcategory: "Strategy",
+        question: "Power BI CoE strategy defined", weight: 3,
+        why: "Without a CoE strategy, scale and governance break down",
+        options: [
+            { score: 1, vid: "COE01_S1", text: "No CoE strategy exists", risk: 12, priority: "Fix now" },
+            { score: 2, vid: "COE01_S2", text: "Some ideas exist but nothing formal", risk: 9, priority: "Fix now" },
+            { score: 3, vid: "COE01_S3", text: "Strategy exists but isn't widely known", risk: 6, priority: "Plan" },
+            { score: 4, vid: "COE01_S4", text: "Strategy is documented and shared", risk: 3, priority: "Accept" },
+            { score: 5, vid: "COE01_S5", text: "Strategy is reviewed and executed", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "COE02", catId: "CAT10", subcatId: "SUB47", subcategory: "Roles",
+        question: "CoE roles and responsibilities defined", weight: 3,
+        why: "Undefined roles create bottlenecks and confusion",
+        options: [
+            { score: 1, vid: "COE02_S1", text: "No formal CoE roles exist", risk: 12, priority: "Fix now" },
+            { score: 2, vid: "COE02_S2", text: "Some informal roles exist", risk: 9, priority: "Fix now" },
+            { score: 3, vid: "COE02_S3", text: "Roles exist but are unclear", risk: 6, priority: "Plan" },
+            { score: 4, vid: "COE02_S4", text: "Roles are clearly defined", risk: 3, priority: "Accept" },
+            { score: 5, vid: "COE02_S5", text: "Roles are staffed and operational", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "COE03", catId: "CAT10", subcatId: "SUB48", subcategory: "Operating Model",
+        question: "CoE operating model defined", weight: 3,
+        why: "Operating model defines how CoE delivers value",
+        options: [
+            { score: 1, vid: "COE03_S1", text: "No operating model exists", risk: 12, priority: "Fix now" },
+            { score: 2, vid: "COE03_S2", text: "Some practices exist", risk: 9, priority: "Fix now" },
+            { score: 3, vid: "COE03_S3", text: "Operating model exists but isn't consistent", risk: 6, priority: "Plan" },
+            { score: 4, vid: "COE03_S4", text: "Operating model is defined", risk: 3, priority: "Accept" },
+            { score: 5, vid: "COE03_S5", text: "Operating model is optimized", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "COE04", catId: "CAT10", subcatId: "SUB49", subcategory: "Funding",
+        question: "CoE funding model defined", weight: 2,
+        why: "Lack of funding limits sustainability",
+        options: [
+            { score: 1, vid: "COE04_S1", text: "No funding model exists", risk: 8, priority: "Plan" },
+            { score: 2, vid: "COE04_S2", text: "Funding is ad hoc", risk: 6, priority: "Plan" },
+            { score: 3, vid: "COE04_S3", text: "Some funding exists", risk: 4, priority: "Accept" },
+            { score: 4, vid: "COE04_S4", text: "Funding is planned", risk: 2, priority: "Accept" },
+            { score: 5, vid: "COE04_S5", text: "Funding is secured", risk: 0, priority: "Accept" }
+        ]
+    },
+    {
+        qid: "COE05", catId: "CAT10", subcatId: "SUB50", subcategory: "Maturity Tracking",
+        question: "Maturity tracked over time", weight: 2,
+        why: "Tracking maturity enables continuous improvement",
+        options: [
+            { score: 1, vid: "COE05_S1", text: "We don't track maturity", risk: 8, priority: "Plan" },
+            { score: 2, vid: "COE05_S2", text: "We track occasionally", risk: 6, priority: "Plan" },
+            { score: 3, vid: "COE05_S3", text: "Maturity is tracked", risk: 4, priority: "Accept" },
+            { score: 4, vid: "COE05_S4", text: "Trends are reviewed", risk: 2, priority: "Accept" },
+            { score: 5, vid: "COE05_S5", text: "Maturity drives roadmap decisions", risk: 0, priority: "Accept" }
+        ]
+    }
+];
+
+// ============================================================
+// APP STATE
+// ============================================================
+let currentCategory = 0;
+let answers = {};
+let clientInfo = {};
+const STORAGE_KEY = "pbi_health_assessment_progress";
+
+// ============================================================
+// GOOGLE SHEETS CONFIG
+// Paste your Google Apps Script web app URL here after setup.
+// See SETUP-GUIDE.html for instructions.
+// ============================================================
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz8eeA4J3bQEDQiZzqxhL4N9PPjUy_ehR34adF0ub6Z6EEaILdKQWWqBrFptCTb7uA1/exec";
+
+// ============================================================
+// INITIALIZATION
+// ============================================================
+function init() {
+    buildCategoryNav();
+    buildCategoryPanels();
+    updateNavButtons();
+    checkForSavedProgress();
+}
+
+function checkForSavedProgress() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            const data = JSON.parse(saved);
+            const answeredCount = Object.keys(data.answers || {}).filter(k => data.answers[k].score !== undefined).length;
+            if (answeredCount > 0 && data.clientInfo) {
+                document.getElementById("resumeSection").style.display = "block";
+                document.getElementById("resumeInfo").textContent =
+                    `${data.clientInfo.name} (${data.clientInfo.company}) - ${answeredCount} of 50 questions answered`;
+            }
+        }
+    } catch (e) {}
+}
+
+function resumeAssessment() {
+    if (loadProgress()) {
+        showScreen("screen-assessment");
+        goToCategory(0);
+    }
+}
+
+function startFresh() {
+    clearSavedProgress();
+    document.getElementById("resumeSection").style.display = "none";
+    document.getElementById("clientName").value = "";
+    document.getElementById("companyName").value = "";
+    document.getElementById("clientEmail").value = "";
+}
+
+function buildCategoryNav() {
+    const nav = document.getElementById("categoryNav");
+    nav.innerHTML = categories.map((cat, i) =>
+        `<button class="cat-pill${i === 0 ? ' active' : ''}" data-idx="${i}" onclick="goToCategory(${i})">${cat.name}</button>`
+    ).join("");
+}
+
+function buildCategoryPanels() {
+    const container = document.getElementById("categoryPanels");
+    container.innerHTML = categories.map((cat, catIdx) => {
+        const catQuestions = questions.filter(q => q.catId === cat.id);
+        const questionsHtml = catQuestions.map((q, qIdx) => {
+            const globalIdx = questions.indexOf(q) + 1;
+            return `
+                <div class="question-card" id="qcard-${q.qid}">
+                    <div class="question-title">${q.question}</div>
+                    <div class="question-why">${q.why}</div>
+                    <ul class="options-list">
+                        ${q.options.map(opt => `
+                            <li class="option-item">
+                                <label>
+                                    <input type="radio" name="q_${q.qid}" value="${opt.score}" data-qid="${q.qid}" onchange="onAnswer('${q.qid}', ${opt.score})">
+                                    <span>${opt.text}</span>
+                                </label>
+                            </li>
+                        `).join("")}
+                    </ul>
+                    <button class="comment-toggle" onclick="toggleComment('${q.qid}')">+ Add comment</button>
+                    <div class="comment-box" id="comment-${q.qid}">
+                        <textarea id="commentText-${q.qid}" placeholder="Add your comment or notes here..." oninput="onComment('${q.qid}')"></textarea>
+                    </div>
+                </div>
+            `;
+        }).join("");
+
+        return `
+            <div class="category-section${catIdx === 0 ? ' active' : ''}" id="cat-panel-${catIdx}">
+                <div class="category-header">
+                    <h2>${cat.name}</h2>
+                    <div class="cat-meta">${catQuestions.length} questions</div>
+                </div>
+                ${questionsHtml}
+            </div>
+        `;
+    }).join("");
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function startAssessment() {
+    const name = document.getElementById("clientName").value.trim();
+    const company = document.getElementById("companyName").value.trim();
+    const email = document.getElementById("clientEmail").value.trim();
+
+    if (!name || !company) {
+        document.getElementById("welcomeError").classList.add("show");
+        return;
+    }
+
+    document.getElementById("welcomeError").classList.remove("show");
+    clientInfo = { name, company, email };
+
+    showScreen("screen-assessment");
+}
+
+function showScreen(id) {
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+    window.scrollTo(0, 0);
+}
+
+function goToCategory(idx) {
+    currentCategory = idx;
+    document.querySelectorAll(".category-section").forEach(s => s.classList.remove("active"));
+    document.getElementById(`cat-panel-${idx}`).classList.add("active");
+
+    document.querySelectorAll(".cat-pill").forEach(p => p.classList.remove("active"));
+    document.querySelector(`.cat-pill[data-idx="${idx}"]`).classList.add("active");
+
+    updateNavButtons();
+    window.scrollTo(0, 0);
+}
+
+function navigateCategory(dir) {
+    const next = currentCategory + dir;
+    if (next < 0) return;
+
+    if (next >= categories.length) {
+        submitAssessment();
+        return;
+    }
+
+    goToCategory(next);
+}
+
+function updateNavButtons() {
+    const prevBtn = document.getElementById("btnPrev");
+    const nextBtn = document.getElementById("btnNext");
+    const stepInd = document.getElementById("stepIndicator");
+
+    prevBtn.style.visibility = currentCategory === 0 ? "hidden" : "visible";
+
+    if (currentCategory === categories.length - 1) {
+        nextBtn.textContent = "Submit Assessment";
+        nextBtn.classList.remove("btn-primary");
+        nextBtn.classList.add("btn-success");
+    } else {
+        nextBtn.innerHTML = "Next &rarr;";
+        nextBtn.classList.remove("btn-success");
+        nextBtn.classList.add("btn-primary");
+    }
+
+    stepInd.textContent = `Category ${currentCategory + 1} of ${categories.length}`;
+}
+
+// ============================================================
+// ANSWERS & PROGRESS
+// ============================================================
+function onAnswer(qid, score) {
+    answers[qid] = { ...answers[qid], score };
+    document.getElementById(`qcard-${qid}`).classList.add("answered");
+    updateProgress();
+}
+
+function onComment(qid) {
+    const text = document.getElementById(`commentText-${qid}`).value;
+    answers[qid] = { ...answers[qid], comment: text };
+}
+
+function toggleComment(qid) {
+    const box = document.getElementById(`comment-${qid}`);
+    box.classList.toggle("show");
+    if (box.classList.contains("show")) {
+        box.querySelector("textarea").focus();
+    }
+}
+
+function updateProgress() {
+    const answered = Object.keys(answers).filter(k => answers[k].score !== undefined).length;
+    const total = questions.length;
+    const pct = Math.round((answered / total) * 100);
+
+    document.getElementById("progressText").textContent = `${answered} of ${total}`;
+    document.getElementById("progressPercent").textContent = `${pct}%`;
+    document.getElementById("progressBar").style.width = `${pct}%`;
+
+    // Update category pills
+    categories.forEach((cat, idx) => {
+        const catQs = questions.filter(q => q.catId === cat.id);
+        const catAnswered = catQs.filter(q => answers[q.qid] && answers[q.qid].score !== undefined).length;
+        const pill = document.querySelector(`.cat-pill[data-idx="${idx}"]`);
+        if (catAnswered === catQs.length) {
+            pill.classList.add("complete");
+        } else {
+            pill.classList.remove("complete");
+        }
+    });
+}
+
+// ============================================================
+// SAVE / LOAD PROGRESS
+// ============================================================
+function saveProgress() {
+    const data = {
+        clientInfo: clientInfo,
+        answers: answers,
+        currentCategory: currentCategory,
+        savedAt: new Date().toISOString()
+    };
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        const statusEl = document.getElementById("saveStatus");
+        statusEl.textContent = "Progress saved!";
+        statusEl.classList.add("saved");
+        setTimeout(() => {
+            statusEl.textContent = "";
+            statusEl.classList.remove("saved");
+        }, 3000);
+    } catch (e) {
+        alert("Could not save progress. Please make sure cookies/localStorage are enabled.");
+    }
+}
+
+function loadProgress() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (!saved) return false;
+
+        const data = JSON.parse(saved);
+        if (!data.clientInfo || !data.answers) return false;
+
+        // Restore client info
+        clientInfo = data.clientInfo;
+        document.getElementById("clientName").value = clientInfo.name || "";
+        document.getElementById("companyName").value = clientInfo.company || "";
+        document.getElementById("clientEmail").value = clientInfo.email || "";
+
+        // Restore answers
+        answers = data.answers;
+        Object.keys(answers).forEach(qid => {
+            const answer = answers[qid];
+            if (answer.score !== undefined) {
+                const radio = document.querySelector(`input[name="q_${qid}"][value="${answer.score}"]`);
+                if (radio) {
+                    radio.checked = true;
+                    document.getElementById(`qcard-${qid}`).classList.add("answered");
+                }
+            }
+            if (answer.comment) {
+                const textarea = document.getElementById(`commentText-${qid}`);
+                if (textarea) {
+                    textarea.value = answer.comment;
+                    document.getElementById(`comment-${qid}`).classList.add("show");
+                }
+            }
+        });
+
+        // Update progress display
+        updateProgress();
+
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+function clearSavedProgress() {
+    localStorage.removeItem(STORAGE_KEY);
+}
+
+// ============================================================
+// SUBMISSION
+// ============================================================
+function submitAssessment() {
+    // Check all questions answered
+    const unanswered = questions.filter(q => !answers[q.qid] || answers[q.qid].score === undefined);
+    if (unanswered.length > 0) {
+        const errorMsg = document.getElementById("assessmentError");
+        errorMsg.textContent = `Please answer all questions before submitting. ${unanswered.length} question(s) remaining.`;
+        errorMsg.classList.add("show");
+
+        // Highlight first unanswered and navigate to its category
+        const firstUnanswered = unanswered[0];
+        const catIdx = categories.findIndex(c => c.id === firstUnanswered.catId);
+        goToCategory(catIdx);
+
+        setTimeout(() => {
+            const card = document.getElementById(`qcard-${firstUnanswered.qid}`);
+            card.classList.add("unanswered-highlight");
+            card.scrollIntoView({ behavior: "smooth", block: "center" });
+            setTimeout(() => card.classList.remove("unanswered-highlight"), 2000);
+        }, 100);
+
+        return;
+    }
+
+    document.getElementById("assessmentError").classList.remove("show");
+
+    // Try to send to Google Sheets
+    if (GOOGLE_SCRIPT_URL) {
+        document.getElementById("loadingOverlay").classList.add("show");
+        sendToGoogleSheets().then(success => {
+            document.getElementById("loadingOverlay").classList.remove("show");
+            showThankYou(success);
+        });
+    } else {
+        showThankYou(false);
+    }
+}
+
+function showThankYou(sheetsSaved) {
+    document.getElementById("thankName").textContent = clientInfo.name;
+
+    const statusEl = document.getElementById("submitStatus");
+    if (sheetsSaved) {
+        statusEl.innerHTML = '<div style="background:#e6f4ea;color:#0d904f;padding:12px;border-radius:8px;">Your responses have been saved to the database successfully.</div>';
+    } else if (GOOGLE_SCRIPT_URL) {
+        statusEl.innerHTML = '<div style="background:#fef7e0;color:#e37400;padding:12px;border-radius:8px;">Could not save to database. Please download the CSV below.</div>';
+    } else {
+        statusEl.innerHTML = '<div style="background:#e8f0fe;color:#1a73e8;padding:12px;border-radius:8px;">Please download your results as CSV below.</div>';
+    }
+
+    // Clear saved progress after successful submission
+    clearSavedProgress();
+
+    showScreen("screen-thankyou");
+}
+
+// ============================================================
+// GOOGLE SHEETS INTEGRATION
+// ============================================================
+async function sendToGoogleSheets() {
+    try {
+        const rows = buildDataRows();
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ rows })
+        });
+        return true;
+    } catch (e) {
+        console.error("Failed to send to Google Sheets:", e);
+        return false;
+    }
+}
+
+// ============================================================
+// CSV GENERATION
+// ============================================================
+function buildDataRows() {
+    const timestamp = new Date().toISOString();
+    return questions.map(q => {
+        const answer = answers[q.qid] || {};
+        const selectedOption = q.options.find(o => o.score === answer.score) || {};
+        const cat = categories.find(c => c.id === q.catId);
+        return {
+            Timestamp: timestamp,
+            ClientName: clientInfo.name,
+            Company: clientInfo.company,
+            Email: clientInfo.email || "",
+            CategoryID: q.catId,
+            Category: cat.name,
+            Pillar: cat.pillar,
+            SubcategoryID: q.subcatId,
+            Subcategory: q.subcategory,
+            QuestionID: q.qid,
+            Question: q.question,
+            Weight: q.weight,
+            Score: answer.score,
+            VerbalScoreID: selectedOption.vid || "",
+            VerbalScore: selectedOption.text || "",
+            RiskScore: selectedOption.risk !== undefined ? selectedOption.risk : "",
+            Priority: selectedOption.priority || "",
+            Comment: answer.comment || ""
+        };
+    });
+}
+
+function downloadCSV() {
+    const rows = buildDataRows();
+    const headers = Object.keys(rows[0]);
+    const csvContent = [
+        headers.join(","),
+        ...rows.map(row =>
+            headers.map(h => {
+                let val = String(row[h] || "");
+                // Escape quotes and wrap in quotes if contains comma, quote, or newline
+                if (val.includes(",") || val.includes('"') || val.includes("\n")) {
+                    val = '"' + val.replace(/"/g, '""') + '"';
+                }
+                return val;
+            }).join(",")
+        )
+    ].join("\n");
+
+    const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const filename = `PBI_Health_Assessment_${clientInfo.company.replace(/[^a-zA-Z0-9]/g, "_")}_${new Date().toISOString().slice(0,10)}.csv`;
+    link.href = url;
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(url);
+}
+
+function restartAssessment() {
+    answers = {};
+    clientInfo = {};
+    currentCategory = 0;
+
+    // Reset all radio buttons
+    document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+    // Reset all textareas
+    document.querySelectorAll("textarea").forEach(t => t.value = "");
+    // Reset question card styles
+    document.querySelectorAll(".question-card").forEach(c => c.classList.remove("answered"));
+    // Reset comment boxes
+    document.querySelectorAll(".comment-box").forEach(b => b.classList.remove("show"));
+    // Reset form fields
+    document.getElementById("clientName").value = "";
+    document.getElementById("companyName").value = "";
+    document.getElementById("clientEmail").value = "";
+
+    updateProgress();
+    goToCategory(0);
+    showScreen("screen-welcome");
+}
+
+// Initialize on load
+init();
+</script>
+
+</body>
+</html>
