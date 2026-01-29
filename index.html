@@ -555,6 +555,73 @@
             margin-top: 6px;
             font-family: inherit;
         }
+
+        /* Priority Summary */
+        .priority-summary {
+            text-align: left;
+            margin: 24px 0;
+            padding: 20px;
+            background: var(--bg);
+            border-radius: var(--radius);
+        }
+
+        .priority-summary h3 {
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            color: var(--text);
+            text-align: center;
+        }
+
+        .priority-category {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .priority-category .cat-name {
+            font-weight: 500;
+        }
+
+        .priority-category .priority-badge {
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .priority-fix-now {
+            background: #fce8e6;
+            border-left: 4px solid #c5221f;
+        }
+
+        .priority-fix-now .priority-badge {
+            background: #c5221f;
+            color: white;
+        }
+
+        .priority-plan {
+            background: #fef7e0;
+            border-left: 4px solid #e37400;
+        }
+
+        .priority-plan .priority-badge {
+            background: #e37400;
+            color: white;
+        }
+
+        .priority-accept {
+            background: #e6f4ea;
+            border-left: 4px solid #0d904f;
+        }
+
+        .priority-accept .priority-badge {
+            background: #0d904f;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -652,6 +719,7 @@
             <h2>Assessment Complete!</h2>
             <p>Thank you, <strong id="thankName"></strong>. Your Power BI Health Assessment has been recorded.</p>
             <div id="submitStatus" style="margin-bottom:20px;"></div>
+            <div class="priority-summary" id="prioritySummary"></div>
             <div class="download-actions">
                 <button class="btn btn-primary" onclick="restartAssessment()">Start New Assessment</button>
             </div>
@@ -1620,10 +1688,60 @@ function showThankYou(sheetsSaved) {
         statusEl.innerHTML = '<div style="background:#e8f0fe;color:#1a73e8;padding:12px;border-radius:8px;">Please download your results as CSV below.</div>';
     }
 
+    // Build priority summary
+    buildPrioritySummary();
+
     // Clear saved progress after successful submission
     clearSavedProgress();
 
     showScreen("screen-thankyou");
+}
+
+function buildPrioritySummary() {
+    const priorityOrder = { "Fix now": 1, "Plan": 2, "Accept": 3 };
+    const categoryPriorities = [];
+
+    categories.forEach(cat => {
+        const catQuestions = questions.filter(q => q.catId === cat.id);
+        let worstPriority = "Accept";
+
+        catQuestions.forEach(q => {
+            const answer = answers[q.qid];
+            if (answer && answer.score !== undefined) {
+                const selectedOption = q.options.find(o => o.score === answer.score);
+                if (selectedOption && selectedOption.priority) {
+                    if (priorityOrder[selectedOption.priority] < priorityOrder[worstPriority]) {
+                        worstPriority = selectedOption.priority;
+                    }
+                }
+            }
+        });
+
+        categoryPriorities.push({
+            name: cat.name,
+            priority: worstPriority
+        });
+    });
+
+    // Sort by priority (Fix now first, then Plan, then Accept)
+    categoryPriorities.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+
+    // Build HTML
+    const summaryHtml = `
+        <h3>Category Priority Overview</h3>
+        ${categoryPriorities.map(cp => {
+            const priorityClass = cp.priority === "Fix now" ? "priority-fix-now" :
+                                  cp.priority === "Plan" ? "priority-plan" : "priority-accept";
+            return `
+                <div class="priority-category ${priorityClass}">
+                    <span class="cat-name">${cp.name}</span>
+                    <span class="priority-badge">${cp.priority}</span>
+                </div>
+            `;
+        }).join("")}
+    `;
+
+    document.getElementById("prioritySummary").innerHTML = summaryHtml;
 }
 
 // ============================================================
