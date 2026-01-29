@@ -737,6 +737,10 @@
             </div>
 
             <button class="btn btn-primary" onclick="startAssessment()">Start Assessment &rarr;</button>
+
+            <div style="margin-top:20px; padding-top:20px; border-top:1px dashed #ccc;">
+                <button class="btn btn-secondary" onclick="autoFillTest()" style="background:#f0f0f0; color:#666; font-size:0.85rem;">Dev: Auto-fill Test Data</button>
+            </div>
         </div>
     </div>
 
@@ -1913,10 +1917,42 @@ function downloadCSV() {
     URL.revokeObjectURL(url);
 }
 
-function requestFollowUp() {
-    const subject = encodeURIComponent(`Hot Lead - ${clientInfo.name} | ${clientInfo.company}`);
-    const body = encodeURIComponent(`The ${clientInfo.name} from ${clientInfo.company} has requested a follow up. Their email is: ${clientInfo.email}.`);
-    window.location.href = `mailto:bachovak@gmail.com?subject=${subject}&body=${body}`;
+async function requestFollowUp() {
+    const btn = document.querySelector('.btn-cta');
+    const originalText = btn.textContent;
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+
+    try {
+        const payload = {
+            type: 'followup',
+            name: clientInfo.name,
+            company: clientInfo.company,
+            email: clientInfo.email,
+            companySize: clientInfo.companySize
+        };
+
+        await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        btn.textContent = 'Request Sent!';
+        btn.style.background = '#0d904f';
+        setTimeout(() => {
+            btn.textContent = originalText;
+            btn.disabled = false;
+            btn.style.background = '';
+        }, 3000);
+    } catch (e) {
+        btn.textContent = 'Error - Try Again';
+        btn.disabled = false;
+        setTimeout(() => {
+            btn.textContent = originalText;
+        }, 3000);
+    }
 }
 
 function restartAssessment() {
@@ -1941,6 +1977,36 @@ function restartAssessment() {
     updateProgress();
     goToCategory(0);
     showScreen("screen-welcome");
+}
+
+// Dev: Auto-fill test data
+function autoFillTest() {
+    // Fill in client info
+    document.getElementById("clientName").value = "Test User";
+    document.getElementById("companyName").value = "Test Company";
+    document.getElementById("clientEmail").value = "test@example.com";
+    document.getElementById("companySize").value = "51-200";
+
+    // Start the assessment
+    clientInfo = {
+        name: "Test User",
+        company: "Test Company",
+        email: "test@example.com",
+        companySize: "51-200"
+    };
+    showScreen("screen-assessment");
+
+    // Fill random answers for all questions
+    questions.forEach(q => {
+        const randomScore = Math.floor(Math.random() * 5) + 1;
+        const radio = document.querySelector(`input[name="q_${q.qid}"][value="${randomScore}"]`);
+        if (radio) {
+            radio.click();
+        }
+    });
+
+    // Go to last category so submit button is visible
+    goToCategory(categories.length - 1);
 }
 
 // Initialize on load

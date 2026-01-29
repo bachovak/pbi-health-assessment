@@ -16,6 +16,12 @@
 function doPost(e) {
   try {
     var data = JSON.parse(e.postData.contents);
+
+    // Handle follow-up request
+    if (data.type === 'followup') {
+      return handleFollowUpRequest(data);
+    }
+
     var rows = data.rows;
 
     // Open or create the spreadsheet
@@ -121,6 +127,31 @@ function getOrCreateSpreadsheet() {
 // Set to "" to disable email notifications
 // ============================================================
 var NOTIFICATION_EMAIL = ""; // e.g., "you@example.com"
+var FOLLOWUP_EMAIL = "bachovak@gmail.com"; // Email for follow-up requests
+
+// Handle follow-up request and send email
+function handleFollowUpRequest(data) {
+  try {
+    var subject = "Hot Lead - " + data.name + " | " + data.company;
+    var body = "The " + data.name + " from " + data.company + " has requested a follow up.\n\n" +
+      "Their email is: " + data.email + "\n" +
+      "Company Size: " + data.companySize;
+
+    MailApp.sendEmail({
+      to: FOLLOWUP_EMAIL,
+      subject: subject,
+      body: body
+    });
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ status: "success", message: "Follow-up email sent" }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (error) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ status: "error", message: error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
 
 function sendEmailNotification(rows) {
   if (!NOTIFICATION_EMAIL) return;
