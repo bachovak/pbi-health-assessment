@@ -622,6 +622,65 @@
             background: #0d904f;
             color: white;
         }
+
+        .priority-category-group {
+            margin-bottom: 16px;
+        }
+
+        .priority-category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            border-radius: 8px 8px 0 0;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .priority-subcategories {
+            background: white;
+            border: 1px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            overflow: hidden;
+        }
+
+        .priority-subcategory {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 16px 10px 24px;
+            font-size: 0.85rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .priority-subcategory:last-child {
+            border-bottom: none;
+        }
+
+        .priority-subcategory .subcat-name {
+            color: var(--text-secondary);
+        }
+
+        .priority-subcategory.priority-fix-now {
+            background: #fef2f2;
+            border-left: 3px solid #c5221f;
+        }
+
+        .priority-subcategory.priority-plan {
+            background: #fffbeb;
+            border-left: 3px solid #e37400;
+        }
+
+        .priority-subcategory.priority-accept {
+            background: #f0fdf4;
+            border-left: 3px solid #0d904f;
+        }
+
+        .priority-subcategory .priority-badge {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+        }
     </style>
 </head>
 <body>
@@ -1699,43 +1758,71 @@ function showThankYou(sheetsSaved) {
 
 function buildPrioritySummary() {
     const priorityOrder = { "Fix now": 1, "Plan": 2, "Accept": 3 };
-    const categoryPriorities = [];
+    const categoryData = [];
 
     categories.forEach(cat => {
         const catQuestions = questions.filter(q => q.catId === cat.id);
-        let worstPriority = "Accept";
+        let catWorstPriority = "Accept";
+        const subcategories = [];
 
         catQuestions.forEach(q => {
             const answer = answers[q.qid];
+            let questionPriority = "Accept";
+
             if (answer && answer.score !== undefined) {
                 const selectedOption = q.options.find(o => o.score === answer.score);
                 if (selectedOption && selectedOption.priority) {
-                    if (priorityOrder[selectedOption.priority] < priorityOrder[worstPriority]) {
-                        worstPriority = selectedOption.priority;
+                    questionPriority = selectedOption.priority;
+                    if (priorityOrder[questionPriority] < priorityOrder[catWorstPriority]) {
+                        catWorstPriority = questionPriority;
                     }
                 }
             }
+
+            subcategories.push({
+                name: q.subcategory,
+                question: q.question,
+                priority: questionPriority
+            });
         });
 
-        categoryPriorities.push({
+        // Sort subcategories by priority
+        subcategories.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+
+        categoryData.push({
             name: cat.name,
-            priority: worstPriority
+            priority: catWorstPriority,
+            subcategories: subcategories
         });
     });
 
-    // Sort by priority (Fix now first, then Plan, then Accept)
-    categoryPriorities.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+    // Sort categories by priority (Fix now first, then Plan, then Accept)
+    categoryData.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
 
     // Build HTML
     const summaryHtml = `
-        <h3>Category Priority Overview</h3>
-        ${categoryPriorities.map(cp => {
-            const priorityClass = cp.priority === "Fix now" ? "priority-fix-now" :
-                                  cp.priority === "Plan" ? "priority-plan" : "priority-accept";
+        <h3>Priority Overview by Category</h3>
+        ${categoryData.map(cat => {
+            const catPriorityClass = cat.priority === "Fix now" ? "priority-fix-now" :
+                                     cat.priority === "Plan" ? "priority-plan" : "priority-accept";
             return `
-                <div class="priority-category ${priorityClass}">
-                    <span class="cat-name">${cp.name}</span>
-                    <span class="priority-badge">${cp.priority}</span>
+                <div class="priority-category-group">
+                    <div class="priority-category-header ${catPriorityClass}">
+                        <span class="cat-name">${cat.name}</span>
+                        <span class="priority-badge">${cat.priority}</span>
+                    </div>
+                    <div class="priority-subcategories">
+                        ${cat.subcategories.map(sub => {
+                            const subPriorityClass = sub.priority === "Fix now" ? "priority-fix-now" :
+                                                     sub.priority === "Plan" ? "priority-plan" : "priority-accept";
+                            return `
+                                <div class="priority-subcategory ${subPriorityClass}">
+                                    <span class="subcat-name">${sub.name}</span>
+                                    <span class="priority-badge">${sub.priority}</span>
+                                </div>
+                            `;
+                        }).join("")}
+                    </div>
                 </div>
             `;
         }).join("")}
