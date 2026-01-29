@@ -779,6 +779,9 @@
             <p>Thank you, <strong id="thankName"></strong>. Your Power BI Health Assessment has been recorded.</p>
             <div id="submitStatus" style="margin-bottom:20px;"></div>
             <div class="priority-summary" id="prioritySummary"></div>
+            <div class="cta-section" style="margin: 24px 0;">
+                <button class="btn btn-success btn-cta" onclick="requestFollowUp()" style="font-size:1.1rem; padding:16px 32px;">I want a follow up</button>
+            </div>
             <div class="download-actions">
                 <button class="btn btn-primary" onclick="restartAssessment()">Start New Assessment</button>
             </div>
@@ -1739,12 +1742,12 @@ function showThankYou(sheetsSaved) {
     document.getElementById("thankName").textContent = clientInfo.name;
 
     const statusEl = document.getElementById("submitStatus");
-    if (sheetsSaved) {
-        statusEl.innerHTML = '<div style="background:#e6f4ea;color:#0d904f;padding:12px;border-radius:8px;">Your responses have been saved to the database successfully.</div>';
-    } else if (GOOGLE_SCRIPT_URL) {
+    if (!sheetsSaved && GOOGLE_SCRIPT_URL) {
         statusEl.innerHTML = '<div style="background:#fef7e0;color:#e37400;padding:12px;border-radius:8px;">Could not save to database. Please download the CSV below.</div>';
-    } else {
+    } else if (!GOOGLE_SCRIPT_URL) {
         statusEl.innerHTML = '<div style="background:#e8f0fe;color:#1a73e8;padding:12px;border-radius:8px;">Please download your results as CSV below.</div>';
+    } else {
+        statusEl.innerHTML = '';
     }
 
     // Build priority summary
@@ -1801,7 +1804,7 @@ function buildPrioritySummary() {
 
     // Build HTML
     const summaryHtml = `
-        <h3>Priority Overview by Category</h3>
+        <h3>Your Results</h3>
         ${categoryData.map(cat => {
             const catPriorityClass = cat.priority === "Fix now" ? "priority-fix-now" :
                                      cat.priority === "Plan" ? "priority-plan" : "priority-accept";
@@ -1908,6 +1911,12 @@ function downloadCSV() {
     link.download = filename;
     link.click();
     URL.revokeObjectURL(url);
+}
+
+function requestFollowUp() {
+    const subject = encodeURIComponent(`Hot Lead - ${clientInfo.name} | ${clientInfo.company}`);
+    const body = encodeURIComponent(`The ${clientInfo.name} from ${clientInfo.company} has requested a follow up. Their email is: ${clientInfo.email}.`);
+    window.location.href = `mailto:bachovak@gmail.com?subject=${subject}&body=${body}`;
 }
 
 function restartAssessment() {
