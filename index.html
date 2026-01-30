@@ -1738,6 +1738,9 @@ function submitAssessment() {
 
     document.getElementById("assessmentError").classList.remove("show");
 
+    // Clear saved progress after successful submission
+    clearSavedProgress();
+
     // Fire and forget - send to Google Sheets in background, show results immediately
     if (GOOGLE_SCRIPT_URL) {
         sendToGoogleSheets();
