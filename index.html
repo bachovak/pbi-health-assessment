@@ -1944,11 +1944,7 @@ async function requestFollowUp() {
         if (result.status === 'success') {
             btn.textContent = 'Request Sent!';
             btn.style.background = '#0d904f';
-            setTimeout(() => {
-                btn.textContent = originalText;
-                btn.disabled = false;
-                btn.style.background = '';
-            }, 3000);
+            // Keep button disabled and showing success
         } else {
             throw new Error(result.message || 'Unknown error');
         }
