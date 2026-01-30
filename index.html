@@ -1426,7 +1426,10 @@ const STORAGE_KEY = "pbi_health_assessment_progress";
 // Paste your Google Apps Script web app URL here after setup.
 // See SETUP-GUIDE.html for instructions.
 // ============================================================
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz8eeA4J3bQEDQiZzqxhL4N9PPjUy_ehR34adF0ub6Z6EEaILdKQWWqBrFptCTb7uA1/exec";
+//Old Version 
+//const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz8eeA4J3bQEDQiZzqxhL4N9PPjUy_ehR34adF0ub6Z6EEaILdKQWWqBrFptCTb7uA1/exec";
+
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxa8pBMra7qFFB4WNoRSaU7_HvUKF0ZrH8vTl7lYke4rbZWTXTfkak-EipefpdpOmZQ/exec";
 
 // ============================================================
 // INITIALIZATION
@@ -1849,16 +1852,13 @@ function buildPrioritySummary() {
 async function sendToGoogleSheets() {
     try {
         const rows = buildDataRows();
-        // Fire and forget - don't wait for response since no-cors can't read it anyway
-        fetch(GOOGLE_SCRIPT_URL, {
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
             method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "text/plain" },
             body: JSON.stringify({ rows })
         });
-        // Small delay for UX feedback, then proceed
-        await new Promise(resolve => setTimeout(resolve, 500));
-        return true;
+        const result = await response.json();
+        return result.status === "success";
     } catch (e) {
         console.error("Failed to send to Google Sheets:", e);
         return false;
@@ -1940,25 +1940,33 @@ async function requestFollowUp() {
             companySize: clientInfo.companySize
         };
 
-        await fetch(GOOGLE_SCRIPT_URL, {
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'text/plain' },
             body: JSON.stringify(payload)
         });
 
-        btn.textContent = 'Request Sent!';
-        btn.style.background = '#0d904f';
-        setTimeout(() => {
-            btn.textContent = originalText;
-            btn.disabled = false;
-            btn.style.background = '';
-        }, 3000);
+        const result = await response.json();
+
+        if (result.status === 'success') {
+            btn.textContent = 'Request Sent!';
+            btn.style.background = '#0d904f';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+                btn.style.background = '';
+            }, 3000);
+        } else {
+            throw new Error(result.message || 'Unknown error');
+        }
     } catch (e) {
+        console.error('Follow-up request failed:', e);
         btn.textContent = 'Error - Try Again';
+        btn.style.background = '#dc3545';
         btn.disabled = false;
         setTimeout(() => {
             btn.textContent = originalText;
+            btn.style.background = '';
         }, 3000);
     }
 }

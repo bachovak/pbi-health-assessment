@@ -17,6 +17,9 @@ function doPost(e) {
   try {
     var data = JSON.parse(e.postData.contents);
 
+    Logger.log("Received request type: " + (data.type || "assessment"));
+    Logger.log("Data: " + JSON.stringify(data));
+
     // Handle follow-up request
     if (data.type === 'followup') {
       return handleFollowUpRequest(data);
@@ -98,6 +101,13 @@ function doGet(e) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
+// Handle CORS preflight requests
+function doOptions(e) {
+  return ContentService
+    .createTextOutput("")
+    .setMimeType(ContentService.MimeType.TEXT);
+}
+
 // Get or create the spreadsheet to store responses
 function getOrCreateSpreadsheet() {
   var props = PropertiesService.getScriptProperties();
@@ -132,10 +142,19 @@ var FOLLOWUP_EMAIL = "bachovak@gmail.com"; // Email for follow-up requests
 // Handle follow-up request and send email
 function handleFollowUpRequest(data) {
   try {
+    Logger.log("Processing follow-up request for: " + data.name + " at " + data.company);
+
+    if (!FOLLOWUP_EMAIL) {
+      Logger.log("Error: FOLLOWUP_EMAIL is not configured");
+      return ContentService
+        .createTextOutput(JSON.stringify({ status: "error", message: "Follow-up email not configured" }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
     var subject = "Hot Lead - " + data.name + " | " + data.company;
     var body = "The " + data.name + " from " + data.company + " has requested a follow up.\n\n" +
       "Their email is: " + data.email + "\n" +
-      "Company Size: " + data.companySize;
+      "Company Size: " + (data.companySize || "Not specified");
 
     MailApp.sendEmail({
       to: FOLLOWUP_EMAIL,
@@ -143,10 +162,13 @@ function handleFollowUpRequest(data) {
       body: body
     });
 
+    Logger.log("Follow-up email sent successfully to: " + FOLLOWUP_EMAIL);
+
     return ContentService
       .createTextOutput(JSON.stringify({ status: "success", message: "Follow-up email sent" }))
       .setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
+    Logger.log("Error in handleFollowUpRequest: " + error.toString());
     return ContentService
       .createTextOutput(JSON.stringify({ status: "error", message: error.toString() }))
       .setMimeType(ContentService.MimeType.JSON);
