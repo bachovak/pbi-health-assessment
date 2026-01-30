@@ -767,7 +767,7 @@
             <div class="nav-center">
                 <span class="step-indicator" id="stepIndicator"></span>
                 <div class="save-inline">
-                    <button class="btn btn-save" onclick="saveProgress()">Save Progress</button>
+                    <button class="btn btn-save" onclick="saveAndNext()">Save &amp; Next &rarr;</button>
                     <span class="save-status" id="saveStatus"></span>
                 </div>
             </div>
@@ -1652,6 +1652,11 @@ function saveProgress() {
     } catch (e) {
         alert("Could not save progress. Please make sure cookies/localStorage are enabled.");
     }
+}
+
+function saveAndNext() {
+    saveProgress();
+    navigateCategory(1);
 }
 
 function loadProgress() {
