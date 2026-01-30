@@ -1849,12 +1849,15 @@ function buildPrioritySummary() {
 async function sendToGoogleSheets() {
     try {
         const rows = buildDataRows();
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
+        // Fire and forget - don't wait for response since no-cors can't read it anyway
+        fetch(GOOGLE_SCRIPT_URL, {
             method: "POST",
             mode: "no-cors",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ rows })
         });
+        // Small delay for UX feedback, then proceed
+        await new Promise(resolve => setTimeout(resolve, 500));
         return true;
     } catch (e) {
         console.error("Failed to send to Google Sheets:", e);
