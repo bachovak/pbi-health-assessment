@@ -1918,46 +1918,28 @@ function downloadCSV() {
     URL.revokeObjectURL(url);
 }
 
-async function requestFollowUp() {
+function requestFollowUp() {
     const btn = document.querySelector('.btn-cta');
-    const originalText = btn.textContent;
-    btn.textContent = 'Sending...';
     btn.disabled = true;
 
-    try {
-        const payload = {
-            type: 'followup',
-            name: clientInfo.name,
-            company: clientInfo.company,
-            email: clientInfo.email,
-            companySize: clientInfo.companySize
-        };
+    const payload = {
+        type: 'followup',
+        name: clientInfo.name,
+        company: clientInfo.company,
+        email: clientInfo.email,
+        companySize: clientInfo.companySize
+    };
 
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain' },
-            body: JSON.stringify(payload)
-        });
+    // Fire and forget - send request in background
+    fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(payload)
+    });
 
-        const result = await response.json();
-
-        if (result.status === 'success') {
-            btn.textContent = 'Request Sent!';
-            btn.style.background = '#0d904f';
-            // Keep button disabled and showing success
-        } else {
-            throw new Error(result.message || 'Unknown error');
-        }
-    } catch (e) {
-        console.error('Follow-up request failed:', e);
-        btn.textContent = 'Error - Try Again';
-        btn.style.background = '#dc3545';
-        btn.disabled = false;
-        setTimeout(() => {
-            btn.textContent = originalText;
-            btn.style.background = '';
-        }, 3000);
-    }
+    // Immediately show success and keep button disabled
+    btn.textContent = 'Request Sent!';
+    btn.style.background = '#0d904f';
 }
 
 function restartAssessment() {
