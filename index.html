@@ -724,6 +724,18 @@
                     <option value="1000+">1,000+ employees</option>
                 </select>
             </div>
+            <div class="form-group">
+                <label for="numPBIUsers">Number of Power BI Users *</label>
+                <input type="number" id="numPBIUsers" placeholder="Enter number of Power BI users" required min="0" step="1">
+            </div>
+            <div class="form-group">
+                <label for="numPBIDevelopers">Number of Power BI Developers *</label>
+                <input type="number" id="numPBIDevelopers" placeholder="Enter number of Power BI developers" required min="0" step="1">
+            </div>
+            <div class="form-group">
+                <label for="avgHourlyRate">Average BI Hourly Rate (EUR)</label>
+                <input type="number" id="avgHourlyRate" placeholder="Default: 50 EUR" min="0" step="1">
+            </div>
 
             <div class="validation-msg" id="welcomeError">Please fill in all required fields to continue.</div>
 
@@ -1469,6 +1481,9 @@ function startFresh() {
     document.getElementById("companyName").value = "";
     document.getElementById("clientEmail").value = "";
     document.getElementById("companySize").value = "";
+    document.getElementById("numPBIUsers").value = "";
+    document.getElementById("numPBIDevelopers").value = "";
+    document.getElementById("avgHourlyRate").value = "";
 }
 
 function buildCategoryNav() {
@@ -1526,14 +1541,45 @@ function startAssessment() {
     const company = document.getElementById("companyName").value.trim();
     const email = document.getElementById("clientEmail").value.trim();
     const companySize = document.getElementById("companySize").value;
+    const numPBIUsersInput = document.getElementById("numPBIUsers");
+    const numPBIDevelopersInput = document.getElementById("numPBIDevelopers");
+    const avgHourlyRateInput = document.getElementById("avgHourlyRate");
 
-    if (!name || !company || !email || !companySize) {
+    const numPBIUsers = numPBIUsersInput.value.trim();
+    const numPBIDevelopers = numPBIDevelopersInput.value.trim();
+    const avgHourlyRateRaw = avgHourlyRateInput.value.trim();
+
+    // Validate required fields
+    if (!name || !company || !email || !companySize || !numPBIUsers || !numPBIDevelopers) {
         document.getElementById("welcomeError").classList.add("show");
         return;
     }
 
+    // Validate whole numbers for required numeric fields
+    const usersNum = parseInt(numPBIUsers, 10);
+    const developersNum = parseInt(numPBIDevelopers, 10);
+    if (isNaN(usersNum) || usersNum < 0 || !Number.isInteger(usersNum) || numPBIUsers !== String(usersNum)) {
+        document.getElementById("welcomeError").classList.add("show");
+        return;
+    }
+    if (isNaN(developersNum) || developersNum < 0 || !Number.isInteger(developersNum) || numPBIDevelopers !== String(developersNum)) {
+        document.getElementById("welcomeError").classList.add("show");
+        return;
+    }
+
+    // Handle optional hourly rate (default to 50 EUR)
+    let avgHourlyRate = 50;
+    if (avgHourlyRateRaw !== "") {
+        const rateNum = parseInt(avgHourlyRateRaw, 10);
+        if (isNaN(rateNum) || rateNum < 0 || !Number.isInteger(rateNum) || avgHourlyRateRaw !== String(rateNum)) {
+            document.getElementById("welcomeError").classList.add("show");
+            return;
+        }
+        avgHourlyRate = rateNum;
+    }
+
     document.getElementById("welcomeError").classList.remove("show");
-    clientInfo = { name, company, email, companySize };
+    clientInfo = { name, company, email, companySize, numPBIUsers: usersNum, numPBIDevelopers: developersNum, avgHourlyRate };
 
     showScreen("screen-assessment");
 }
@@ -1675,6 +1721,9 @@ function loadProgress() {
         document.getElementById("companyName").value = clientInfo.company || "";
         document.getElementById("clientEmail").value = clientInfo.email || "";
         document.getElementById("companySize").value = clientInfo.companySize || "";
+        document.getElementById("numPBIUsers").value = clientInfo.numPBIUsers !== undefined ? clientInfo.numPBIUsers : "";
+        document.getElementById("numPBIDevelopers").value = clientInfo.numPBIDevelopers !== undefined ? clientInfo.numPBIDevelopers : "";
+        document.getElementById("avgHourlyRate").value = clientInfo.avgHourlyRate !== undefined && clientInfo.avgHourlyRate !== 50 ? clientInfo.avgHourlyRate : "";
 
         // Restore answers
         answers = data.answers;
@@ -1875,6 +1924,9 @@ function buildDataRows() {
             Company: clientInfo.company,
             Email: clientInfo.email,
             CompanySize: clientInfo.companySize,
+            NumPBIUsers: clientInfo.numPBIUsers,
+            NumPBIDevelopers: clientInfo.numPBIDevelopers,
+            AvgHourlyRate: clientInfo.avgHourlyRate,
             CategoryID: q.catId,
             Category: cat.name,
             Pillar: cat.pillar,
@@ -1929,7 +1981,10 @@ function requestFollowUp() {
         name: clientInfo.name,
         company: clientInfo.company,
         email: clientInfo.email,
-        companySize: clientInfo.companySize
+        companySize: clientInfo.companySize,
+        numPBIUsers: clientInfo.numPBIUsers,
+        numPBIDevelopers: clientInfo.numPBIDevelopers,
+        avgHourlyRate: clientInfo.avgHourlyRate
     };
 
     // Fire and forget - send request in background
@@ -1962,6 +2017,9 @@ function restartAssessment() {
     document.getElementById("companyName").value = "";
     document.getElementById("clientEmail").value = "";
     document.getElementById("companySize").value = "";
+    document.getElementById("numPBIUsers").value = "";
+    document.getElementById("numPBIDevelopers").value = "";
+    document.getElementById("avgHourlyRate").value = "";
 
     updateProgress();
     goToCategory(0);

@@ -34,7 +34,8 @@ function doPost(e) {
     // Add headers if sheet is empty
     if (sheet.getLastRow() === 0) {
       var headers = [
-        "Timestamp", "ClientName", "Company", "Email",
+        "Timestamp", "ClientName", "Company", "Email", "CompanySize",
+        "NumPBIUsers", "NumPBIDevelopers", "AvgHourlyRate",
         "CategoryID", "Category", "Pillar",
         "SubcategoryID", "Subcategory",
         "QuestionID", "Question", "Weight",
@@ -58,6 +59,10 @@ function doPost(e) {
         row.ClientName,
         row.Company,
         row.Email,
+        row.CompanySize,
+        row.NumPBIUsers,
+        row.NumPBIDevelopers,
+        row.AvgHourlyRate,
         row.CategoryID,
         row.Category,
         row.Pillar,
@@ -76,7 +81,7 @@ function doPost(e) {
     });
 
     // Auto-resize columns
-    for (var i = 1; i <= 18; i++) {
+    for (var i = 1; i <= 22; i++) {
       sheet.autoResizeColumn(i);
     }
 
@@ -154,7 +159,10 @@ function handleFollowUpRequest(data) {
     var subject = "Hot Lead - " + data.name + " | " + data.company;
     var body = "The " + data.name + " from " + data.company + " has requested a follow up.\n\n" +
       "Their email is: " + data.email + "\n" +
-      "Company Size: " + (data.companySize || "Not specified");
+      "Company Size: " + (data.companySize || "Not specified") + "\n" +
+      "Number of Power BI Users: " + (data.numPBIUsers !== undefined ? data.numPBIUsers : "Not specified") + "\n" +
+      "Number of Power BI Developers: " + (data.numPBIDevelopers !== undefined ? data.numPBIDevelopers : "Not specified") + "\n" +
+      "Average BI Hourly Rate: EUR " + (data.avgHourlyRate !== undefined ? data.avgHourlyRate : "50 (default)");
 
     MailApp.sendEmail({
       to: FOLLOWUP_EMAIL,
