@@ -1446,6 +1446,8 @@ const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxa8pBMra7qFF
 // INITIALIZATION
 // ============================================================
 function init() {
+    console.log("=== PBI Health Assessment LOADED ===");
+    console.log("Script URL configured:", GOOGLE_SCRIPT_URL ? "YES" : "NO");
     buildCategoryNav();
     buildCategoryPanels();
     updateNavButtons();
