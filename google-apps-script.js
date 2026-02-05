@@ -38,7 +38,7 @@ function doPost(e) {
         "NumPBIUsers", "NumPBIDevelopers", "AvgHourlyRate",
         "CategoryID", "Category", "Pillar",
         "SubcategoryID", "Subcategory",
-        "QuestionID", "Question", "Weight",
+        "QuestionID", "Question", "Why", "Weight",
         "Score", "VerbalScoreID", "VerbalScore",
         "RiskScore", "Priority", "Comment"
       ];
@@ -70,6 +70,7 @@ function doPost(e) {
         row.Subcategory,
         row.QuestionID,
         row.Question,
+        row.Why,
         row.Weight,
         row.Score,
         row.VerbalScoreID,
@@ -81,7 +82,7 @@ function doPost(e) {
     });
 
     // Auto-resize columns
-    for (var i = 1; i <= 22; i++) {
+    for (var i = 1; i <= 23; i++) {
       sheet.autoResizeColumn(i);
     }
 

@@ -1762,6 +1762,9 @@ function clearSavedProgress() {
 // SUBMISSION
 // ============================================================
 function submitAssessment() {
+    console.log("submitAssessment called");
+    console.log("GOOGLE_SCRIPT_URL:", GOOGLE_SCRIPT_URL);
+
     // Check all questions answered
     const unanswered = questions.filter(q => !answers[q.qid] || answers[q.qid].score === undefined);
     if (unanswered.length > 0) {
@@ -1898,14 +1901,33 @@ function buildPrioritySummary() {
 function sendToGoogleSheets() {
     try {
         const rows = buildDataRows();
-        // Fire and forget - send in background, don't wait
+        console.log("Sending to Google Sheets:", rows.length, "rows");
+        console.log("First row:", JSON.stringify(rows[0]));
+
         fetch(GOOGLE_SCRIPT_URL, {
             method: "POST",
             headers: { "Content-Type": "text/plain" },
             body: JSON.stringify({ rows })
+        })
+        .then(response => response.text())
+        .then(text => {
+            console.log("Google Sheets response:", text);
+            try {
+                const result = JSON.parse(text);
+                if (result.status === "error") {
+                    alert("Error saving to Google Sheets: " + result.message);
+                }
+            } catch (e) {
+                console.log("Response was not JSON:", text);
+            }
+        })
+        .catch(err => {
+            console.error("Fetch error:", err);
+            alert("Failed to connect to Google Sheets: " + err.message);
         });
     } catch (e) {
         console.error("Failed to send to Google Sheets:", e);
+        alert("Error preparing data: " + e.message);
     }
 }
 
@@ -1934,6 +1956,7 @@ function buildDataRows() {
             Subcategory: q.subcategory,
             QuestionID: q.qid,
             Question: q.question,
+            Why: q.why,
             Weight: q.weight,
             Score: answer.score,
             VerbalScoreID: selectedOption.vid || "",
