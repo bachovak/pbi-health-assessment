@@ -119,20 +119,29 @@ function getOrCreateSpreadsheet() {
   var props = PropertiesService.getScriptProperties();
   var ssId = props.getProperty("SPREADSHEET_ID");
 
+  Logger.log("Stored SPREADSHEET_ID: " + ssId);
+
   if (ssId) {
     try {
-      return SpreadsheetApp.openById(ssId);
+      var existingSs = SpreadsheetApp.openById(ssId);
+      Logger.log("Opened existing spreadsheet: " + existingSs.getUrl());
+      return existingSs;
     } catch (e) {
-      // Spreadsheet was deleted, create a new one
+      Logger.log("Could not open spreadsheet (may be deleted): " + e.toString());
+      // Clear the old ID so we create a new one
+      props.deleteProperty("SPREADSHEET_ID");
     }
   }
 
   // Create new spreadsheet
+  Logger.log("Creating new spreadsheet...");
   var ss = SpreadsheetApp.create("Power BI Health Assessment Responses");
-  props.setProperty("SPREADSHEET_ID", ss.getId());
+  var newId = ss.getId();
+  props.setProperty("SPREADSHEET_ID", newId);
 
-  // Log the URL so you can find it
-  Logger.log("Created spreadsheet: " + ss.getUrl());
+  Logger.log("Created NEW spreadsheet!");
+  Logger.log("ID: " + newId);
+  Logger.log("URL: " + ss.getUrl());
 
   return ss;
 }
