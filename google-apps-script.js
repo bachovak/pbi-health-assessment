@@ -40,7 +40,7 @@ function doPost(e) {
         "SubcategoryID", "Subcategory",
         "QuestionID", "Question", "Why", "Weight",
         "Score", "VerbalScoreID", "VerbalScore",
-        "RiskScore", "Priority", "Comment"
+        "RiskScore", "Priority", "Risk", "Fix", "AffectedUsers", "DetailedRiskExplanation", "Comment"
       ];
       sheet.appendRow(headers);
 
@@ -77,12 +77,16 @@ function doPost(e) {
         row.VerbalScore,
         row.RiskScore,
         row.Priority,
+        row.Risk,
+        row.Fix,
+        row.AffectedUsers,
+        row.DetailedRiskExplanation,
         row.Comment
       ]);
     });
 
     // Auto-resize columns
-    for (var i = 1; i <= 23; i++) {
+    for (var i = 1; i <= 27; i++) {
       sheet.autoResizeColumn(i);
     }
 
