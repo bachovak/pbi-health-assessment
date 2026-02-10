@@ -688,6 +688,202 @@
             font-size: 0.7rem;
             padding: 2px 8px;
         }
+
+        /* ===== PILLAR VISUALS ===== */
+        .results-visuals {
+            margin-bottom: 32px;
+        }
+
+        .results-visuals h3 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.2rem;
+            text-align: center;
+            margin-bottom: 24px;
+            color: var(--text);
+        }
+
+        /* Overall score ring */
+        .overall-score {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .score-ring {
+            position: relative;
+            display: inline-block;
+        }
+
+        .score-ring svg {
+            transform: rotate(-90deg);
+        }
+
+        .score-ring__label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .score-ring__value {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            line-height: 1;
+            display: block;
+        }
+
+        .score-ring__text {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            display: block;
+        }
+
+        /* Pillar cards */
+        .pillar-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .pillar-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px 16px;
+            text-align: center;
+        }
+
+        .pillar-card__name {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text);
+        }
+
+        .pillar-card__ring {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .pillar-card__ring svg {
+            transform: rotate(-90deg);
+        }
+
+        .pillar-card__score {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .pillar-card__status {
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 4px 14px;
+            border-radius: 100px;
+            display: inline-block;
+        }
+
+        .pillar-status--fix-now {
+            background: #fef2f2;
+            color: #DC2626;
+        }
+
+        .pillar-status--plan {
+            background: #fef7e0;
+            color: #CA8A04;
+        }
+
+        .pillar-status--accept {
+            background: #f0fdf4;
+            color: #16A34A;
+        }
+
+        /* Category bars */
+        .category-bars {
+            margin-bottom: 8px;
+        }
+
+        .category-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .category-bar__label {
+            flex: 0 0 200px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-align: right;
+            color: var(--text);
+        }
+
+        .category-bar__track {
+            flex: 1;
+            height: 24px;
+            background: var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .category-bar__fill {
+            height: 100%;
+            border-radius: 12px;
+            transition: width 0.6s ease;
+            min-width: 2px;
+        }
+
+        .category-bar__value {
+            flex: 0 0 48px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-align: left;
+        }
+
+        .bar-fill--red { background: linear-gradient(90deg, #DC2626, #ef4444); }
+        .bar-fill--amber { background: linear-gradient(90deg, #CA8A04, #D97706); }
+        .bar-fill--green { background: linear-gradient(90deg, #16A34A, #22c55e); }
+
+        .bar-value--red { color: #DC2626; }
+        .bar-value--amber { color: #CA8A04; }
+        .bar-value--green { color: #16A34A; }
+
+        /* Pillar label under bar */
+        .category-bar__pillar {
+            flex: 0 0 60px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 600px) {
+            .pillar-cards {
+                grid-template-columns: 1fr;
+            }
+            .category-bar {
+                flex-wrap: wrap;
+            }
+            .category-bar__label {
+                flex: 1 1 100%;
+                text-align: left;
+                margin-bottom: 4px;
+            }
+            .category-bar__pillar {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -800,6 +996,7 @@
             <h2>Assessment Complete!</h2>
             <p>Thank you, <strong id="thankName"></strong>. Your Power BI Health Assessment has been recorded.</p>
             <div id="submitStatus" style="margin-bottom:20px;"></div>
+            <div class="results-visuals" id="resultsVisuals"></div>
             <div class="priority-summary" id="prioritySummary"></div>
             <div class="cta-section" style="margin: 24px 0;">
                 <button class="btn btn-success btn-cta" onclick="requestFollowUp()" style="font-size:1.1rem; padding:16px 32px;">I want a follow up</button>
@@ -1821,12 +2018,122 @@ function showThankYou(sheetsSaved) {
     }
 
     // Build priority summary
+    buildResultsVisuals();
     buildPrioritySummary();
 
     // Clear saved progress after successful submission
     clearSavedProgress();
 
     showScreen("screen-thankyou");
+}
+
+function buildResultsVisuals() {
+    // Calculate scores per category
+    const catScores = categories.map(cat => {
+        const catQs = questions.filter(q => q.catId === cat.id);
+        let total = 0, count = 0;
+        catQs.forEach(q => {
+            const a = answers[q.qid];
+            if (a && a.score !== undefined) {
+                total += a.score;
+                count++;
+            }
+        });
+        const avg = count > 0 ? total / count : 0;
+        const pct = Math.round((avg / 5) * 100);
+        return { name: cat.name, pillar: cat.pillar, avg: avg, pct: pct };
+    });
+
+    // Calculate scores per pillar
+    const pillarNames = ["CoE", "BI Ops", "Reporting"];
+    const pillarScores = pillarNames.map(p => {
+        const cats = catScores.filter(c => c.pillar === p);
+        const avgPct = cats.length > 0 ? Math.round(cats.reduce((s, c) => s + c.pct, 0) / cats.length) : 0;
+        return { name: p, pct: avgPct };
+    });
+
+    // Overall score
+    const overallPct = Math.round(catScores.reduce((s, c) => s + c.pct, 0) / catScores.length);
+
+    function scoreColour(pct) {
+        if (pct < 40) return "#DC2626";
+        if (pct < 70) return "#CA8A04";
+        return "#16A34A";
+    }
+
+    function statusLabel(pct) {
+        if (pct < 40) return { text: "Fix Now", cls: "pillar-status--fix-now" };
+        if (pct < 70) return { text: "Plan", cls: "pillar-status--plan" };
+        return { text: "Good", cls: "pillar-status--accept" };
+    }
+
+    function ringSvg(pct, colour, size, strokeWidth) {
+        const r = (size - strokeWidth) / 2;
+        const circumference = 2 * Math.PI * r;
+        const offset = circumference - (pct / 100) * circumference;
+        return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+            <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--border)" stroke-width="${strokeWidth}"/>
+            <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${colour}" stroke-width="${strokeWidth}"
+                stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" stroke-linecap="round"/>
+        </svg>`;
+    }
+
+    function barColourClass(pct) {
+        if (pct < 40) return "red";
+        if (pct < 70) return "amber";
+        return "green";
+    }
+
+    const html = `
+        <h3>Score Overview</h3>
+
+        <!-- Overall score ring -->
+        <div class="overall-score">
+            <div class="score-ring">
+                ${ringSvg(overallPct, scoreColour(overallPct), 140, 10)}
+                <div class="score-ring__label">
+                    <span class="score-ring__value" style="color:${scoreColour(overallPct)}">${overallPct}%</span>
+                    <span class="score-ring__text">Overall Score</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pillar rings -->
+        <div class="pillar-cards">
+            ${pillarScores.map(p => {
+                const status = statusLabel(p.pct);
+                return `
+                    <div class="pillar-card">
+                        <div class="pillar-card__name">${p.name}</div>
+                        <div class="pillar-card__ring">
+                            ${ringSvg(p.pct, scoreColour(p.pct), 100, 8)}
+                            <span class="pillar-card__score" style="color:${scoreColour(p.pct)}">${p.pct}%</span>
+                        </div>
+                        <div><span class="pillar-card__status ${status.cls}">${status.text}</span></div>
+                    </div>
+                `;
+            }).join("")}
+        </div>
+
+        <!-- Category bars -->
+        <div class="category-bars">
+            ${catScores.map(c => {
+                const col = barColourClass(c.pct);
+                return `
+                    <div class="category-bar">
+                        <span class="category-bar__label">${c.name}</span>
+                        <div class="category-bar__track">
+                            <div class="category-bar__fill bar-fill--${col}" style="width:${Math.max(c.pct, 2)}%"></div>
+                        </div>
+                        <span class="category-bar__value bar-value--${col}">${c.pct}%</span>
+                        <span class="category-bar__pillar">${c.pillar}</span>
+                    </div>
+                `;
+            }).join("")}
+        </div>
+    `;
+
+    document.getElementById("resultsVisuals").innerHTML = html;
 }
 
 function buildPrioritySummary() {
