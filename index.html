@@ -5,9 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Power BI Health Assessment</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== SELF-HOSTED FONTS — no data sent to Google servers ===== */
+        /* Playfair Display (variable font — covers weights 400–700) */
+        @font-face {
+            font-family: 'Playfair Display';
+            font-style: normal;
+            font-weight: 400 700;
+            font-display: swap;
+            src: url('fonts/playfair-display-latin-ext.woff2') format('woff2');
+            unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+        }
+        @font-face {
+            font-family: 'Playfair Display';
+            font-style: normal;
+            font-weight: 400 700;
+            font-display: swap;
+            src: url('fonts/playfair-display-latin.woff2') format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+        /* Source Sans 3 (variable font — covers weights 300–700) */
+        @font-face {
+            font-family: 'Source Sans 3';
+            font-style: normal;
+            font-weight: 300 700;
+            font-display: swap;
+            src: url('fonts/source-sans-3-latin-ext.woff2') format('woff2');
+            unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+        }
+        @font-face {
+            font-family: 'Source Sans 3';
+            font-style: normal;
+            font-weight: 300 700;
+            font-display: swap;
+            src: url('fonts/source-sans-3-latin.woff2') format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+    </style>
     <style>
         :root {
             --primary: #D97706;
@@ -454,6 +488,43 @@
         }
 
         .setup-notice strong { color: var(--warning); }
+
+        /* GDPR consent block */
+        .gdpr-notice {
+            background: #f9f5f0;
+            border: 1px solid #e0d4c3;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .gdpr-notice p { margin-bottom: 12px; }
+
+        .gdpr-notice a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        .gdpr-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            cursor: pointer;
+            color: var(--text);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .gdpr-checkbox input[type="checkbox"] {
+            margin-top: 3px;
+            flex-shrink: 0;
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary);
+        }
 
         /* Validation */
         .validation-msg {
@@ -943,7 +1014,17 @@
                 <input type="number" id="avgHourlyRate" placeholder="Default: 50 EUR" min="0" step="1">
             </div>
 
-            <div class="validation-msg" id="welcomeError">Please fill in all required fields to continue.</div>
+            <!-- GDPR consent -->
+            <div class="gdpr-notice">
+                <p>By starting this assessment, you agree that the information you provide (name, company, email, and your answers) will be stored in a secure spreadsheet accessible only to Kristina Bachová. It is used solely to generate your personalised assessment results and, if requested, to follow up with recommendations. Your data will not be shared with third parties.</p>
+                <p>You may request access to or deletion of your data at any time by emailing <a href="mailto:info@kristinabachova.com">info@kristinabachova.com</a>. For full details, see the <a href="https://kristinabachova.com/#privacy-policy" target="_blank" rel="noopener">Privacy &amp; Cookie Policy</a>.</p>
+                <label class="gdpr-checkbox">
+                    <input type="checkbox" id="gdprConsent">
+                    <span>I agree to my personal data being processed for the purpose of this assessment. *</span>
+                </label>
+            </div>
+
+            <div class="validation-msg" id="welcomeError">Please fill in all required fields and accept the data processing consent to continue.</div>
 
             <div id="resumeSection" style="display:none; background:#f0fdf4; border:1px solid #16A34A; border-radius:8px; padding:16px; margin-bottom:20px;">
                 <strong style="color:#16A34A;">Saved progress found!</strong>
@@ -1758,8 +1839,9 @@ function startAssessment() {
     const numPBIDevelopers = numPBIDevelopersInput.value.trim();
     const avgHourlyRateRaw = avgHourlyRateInput.value.trim();
 
-    // Validate required fields
-    if (!name || !company || !email || !companySize || !numPBIUsers || !numPBIDevelopers) {
+    // Validate required fields and GDPR consent
+    const gdprConsent = document.getElementById("gdprConsent").checked;
+    if (!name || !company || !email || !companySize || !numPBIUsers || !numPBIDevelopers || !gdprConsent) {
         document.getElementById("welcomeError").classList.add("show");
         return;
     }
