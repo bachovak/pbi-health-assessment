@@ -2,7 +2,7 @@
 
 ## UX & Design
 - [ ] Add a progress percentage or step count on the welcome screen (e.g. "50 questions across 10 categories")
-- [ ] Add a "Back to website" link/button in the header linking to bachovak.github.io/website
+- [x] Add a "Back to website" link/button in the header — **Done 2026-02-27**: links to kristinabachova.com.
 - [ ] Improve mobile layout of results visuals (pillar rings and category bars)
 - [ ] Add animated transitions between category sections
 - [ ] Add a confirmation dialog before "Start New Assessment" to prevent accidental resets
