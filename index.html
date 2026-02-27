@@ -1085,6 +1085,17 @@
             <div class="cta-section" style="margin: 24px 0;">
                 <button class="btn btn-success btn-cta" onclick="requestFollowUp()" style="font-size:1.1rem; padding:16px 32px;">I want a follow up</button>
             </div>
+
+            <!-- Calendly booking (shown after follow-up request) -->
+            <div id="calendly-section" style="display:none; margin: 0 0 24px;">
+                <div class="gdpr-notice" style="margin-bottom:16px;">
+                    <p>The booking calendar below is provided by <strong>Calendly</strong> and may set cookies on your device. By loading it, you accept <a href="https://calendly.com/privacy" target="_blank" rel="noopener">Calendly's Privacy Policy</a>.</p>
+                    <button class="btn btn-primary" id="loadCalendlyBtn" onclick="loadCalendly()" style="margin-top:8px;">Load booking calendar</button>
+                </div>
+                <div id="calendly-widget" style="display:none;">
+                    <div class="calendly-inline-widget" data-url="https://calendly.com/bachovak/30min" style="min-width:320px;height:700px;"></div>
+                </div>
+            </div>
             <div class="download-actions">
                 <button class="btn btn-primary" onclick="restartAssessment()">Start New Assessment</button>
             </div>
@@ -2422,11 +2433,28 @@ function requestFollowUp() {
         body: JSON.stringify(payload)
     });
 
-    // Open Calendly booking page in a new tab
-    window.open('https://calendly.com/bachovak/30min', '_blank', 'noopener');
-
-    btn.textContent = 'Booking page opened!';
+    btn.textContent = 'Request noted!';
     btn.style.background = '#16A34A';
+
+    // Reveal the Calendly consent + booking section
+    const section = document.getElementById('calendly-section');
+    section.style.display = 'block';
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function loadCalendly() {
+    document.getElementById('loadCalendlyBtn').style.display = 'none';
+    document.getElementById('calendly-widget').style.display = 'block';
+
+    // Dynamically load Calendly assets
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://assets.calendly.com/assets/external/widget.css';
+    document.head.appendChild(link);
+
+    const script = document.createElement('script');
+    script.src = 'https://assets.calendly.com/assets/external/widget.js';
+    document.head.appendChild(script);
 }
 
 function restartAssessment() {
