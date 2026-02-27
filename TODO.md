@@ -8,7 +8,7 @@
 - [ ] Add a confirmation dialog before "Start New Assessment" to prevent accidental resets
 
 ## Results Screen
-- [ ] Link "I want a follow up" button to Calendly (bachovak.github.io/pbi-health-assessment currently sends to Google Sheets only)
+- [x] Link "I want a follow up" button to Calendly — **Done 2026-02-27**: opens calendly.com/bachovak/30min in new tab, background notification to Google Sheets retained.
 - [ ] Add option to download results as PDF (currently only CSV)
 - [ ] Add written recommendations per pillar based on score ranges
 - [ ] Show a comparison benchmark (e.g. "You scored higher than average in BI Ops")

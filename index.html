@@ -2415,15 +2415,17 @@ function requestFollowUp() {
         avgHourlyRate: clientInfo.avgHourlyRate
     };
 
-    // Fire and forget - send request in background
+    // Fire and forget - notify in background
     fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(payload)
     });
 
-    // Immediately show success and keep button disabled
-    btn.textContent = 'Request Sent!';
+    // Open Calendly booking page in a new tab
+    window.open('https://calendly.com/bachovak/30min', '_blank', 'noopener');
+
+    btn.textContent = 'Booking page opened!';
     btn.style.background = '#16A34A';
 }
 
