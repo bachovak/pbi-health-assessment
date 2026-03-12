@@ -156,7 +156,7 @@ function getOrCreateSpreadsheet() {
 // Set to "" to disable email notifications
 // ============================================================
 var NOTIFICATION_EMAIL = ""; // e.g., "you@example.com"
-var FOLLOWUP_EMAIL = "bachovak@gmail.com"; // Email for follow-up requests
+var FOLLOWUP_EMAIL = "info@kristinabachova.com"; // Email for follow-up requests
 
 // Handle follow-up request and send email
 function handleFollowUpRequest(data) {
