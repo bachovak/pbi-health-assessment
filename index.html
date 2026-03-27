@@ -1038,10 +1038,12 @@
         .rpt-container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
 
         /* Nav */
-        .rpt-nav { background: #1C1917; height: 64px; display: flex; align-items: center; position: sticky; top: 0; z-index: 10; }
-        .rpt-nav__inner { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+        .rpt-nav { background: #1C1917; padding: 16px 0; display: flex; align-items: center; position: sticky; top: 0; z-index: 10; }
+        .rpt-nav__inner { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; }
         .rpt-nav__logo { font-family: 'Playfair Display', Georgia, serif; font-size: 1.1rem; color: #fff; text-decoration: none; }
-        .rpt-nav__label { font-size: 0.78rem; color: rgba(255,255,255,0.4); }
+        .rpt-nav__label { font-size: 0.78rem; color: rgba(255,255,255,0.4); letter-spacing: 0.02em; }
+        .rpt-nav__restart-btn { font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 0.82rem; font-weight: 600; color: #1C1917; background: #D97706; border: none; border-radius: 100px; padding: 8px 20px; cursor: pointer; white-space: nowrap; }
+        .rpt-nav__restart-btn:hover { background: #EA580C; }
 
         /* Header */
         .rpt-header { background: #1C1917; padding: 52px 0 44px; }
@@ -1162,8 +1164,37 @@
             .rpt-container { padding: 0 16px; }
         }
         @media print {
+            @page {
+                size: A4 portrait;
+                margin: 12mm 12mm 18mm;
+                @bottom-center {
+                    content: counter(page) " / " counter(pages);
+                    font-size: 8pt;
+                    color: #78716C;
+                    font-family: 'Source Sans 3', system-ui, sans-serif;
+                }
+            }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body, body.report-mode { overflow: visible !important; background: #FAF7F5 !important; }
+            body.report-mode #screen-thankyou.active {
+                position: static !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+            /* Hide everything except the report */
+            .loading-overlay, #screen-start, #screen-assessment, #screen-welcome { display: none !important; }
+            /* Hide CTA and footer from PDF */
+            .rpt-section.rpt-section--white:has(.rpt-cta-wrap) { display: none !important; }
+            .rpt-footer { display: none !important; }
             .rpt-nav { position: static; }
-            body.report-mode #screen-thankyou.active { position: static; overflow: visible; }
+
+            /* Page break before pillar scorecard */
+            .rpt-print-break { break-before: page; }
+            /* Prevent mid-element page breaks */
+            .rpt-kpi-card, .rpt-risk-item, .rpt-chart-card, .rpt-table-card { break-inside: avoid; }
+            /* Ensure full-width layout */
+            .rpt-container { max-width: 100% !important; padding: 0 12px !important; }
+            .rpt-charts-grid { grid-template-columns: 1fr 1fr !important; }
         }
     </style>
 </head>
@@ -2295,6 +2326,7 @@ function showThankYou(sheetsSaved) {
 // ============================================================
 // REPORT RESULTS
 // ============================================================
+
 function buildReport() {
     const rate  = clientInfo.avgHourlyRate   || 50;
     const devs  = clientInfo.numPBIDevelopers || 1;
@@ -2444,7 +2476,7 @@ function buildReport() {
             <div class="rpt-container">
                 <div class="rpt-nav__inner">
                     <a href="https://kristinabachova.com" class="rpt-nav__logo">kristinabachova.com</a>
-                    <span class="rpt-nav__label">Power BI Health Check &mdash; Confidential</span>
+                    <button class="rpt-nav__restart-btn" onclick="restartAssessment()">Start New Assessment</button>
                 </div>
             </div>
         </nav>
@@ -2495,7 +2527,7 @@ function buildReport() {
             </div>
         </div>
 
-        <div class="rpt-section rpt-section--warm">
+        <div class="rpt-section rpt-section--warm rpt-print-break">
             <div class="rpt-container">
                 <div class="rpt-section__title">Pillar Scorecard</div>
                 <div class="rpt-charts-grid">
@@ -2537,14 +2569,11 @@ function buildReport() {
 
         <div class="rpt-footer">
             <div class="rpt-container">
-                <div class="rpt-footer__name">Kristina Bách\u00F3v\u00E1</div>
-                <div class="rpt-footer__tagline">Independent Power BI Consultant &middot; Algarve, Portugal</div>
+                <div class="rpt-footer__name">Krist\u00EDna Bachov\u00E1</div>
+                <div class="rpt-footer__tagline">Power BI Specialist &mdash; Making BI Reliable, Scalable &amp; Business-Trusted</div>
                 <div class="rpt-footer__legal">
                     This report is confidential and prepared exclusively for ${clientInfo.name} at ${clientInfo.company}.<br>
                     &copy; ${new Date().getFullYear()} kristinabachova.com
-                </div>
-                <div class="rpt-footer__restart">
-                    <button class="btn btn-secondary" onclick="restartAssessment()" style="opacity:0.45;font-size:0.82rem;padding:7px 18px;">Start New Assessment</button>
                 </div>
             </div>
         </div>
