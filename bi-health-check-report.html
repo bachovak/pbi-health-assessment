@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Power BI Health Check — Your Results</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap');
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+:root {
+  --colour-primary:    #D97706;
+  --colour-accent:     #EA580C;
+  --colour-dark:       #1C1917;
+  --colour-mid:        #92400E;
+  --colour-bg:         #FAF7F5;
+  --colour-card:       #FFFFFF;
+  --colour-text:       #44403C;
+  --colour-text-muted: #78716C;
+  --colour-border:     #E7E5E4;
+  --colour-green:      #16A34A;
+  --colour-warning:    #CA8A04;
+  --colour-red:        #DC2626;
+  --font-heading: 'Playfair Display', Georgia, serif;
+  --font-body:    'Source Sans 3', system-ui, sans-serif;
+  --radius: 8px;
+  --radius-pill: 100px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --nav-height: 72px;
+  --container-width: 1120px;
+  --transition: 0.25s ease;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+body { font-family: var(--font-body); color: var(--colour-text); background: var(--colour-bg); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4 { font-family: var(--font-heading); color: var(--colour-dark); line-height: 1.25; font-weight: 700; }
+a { color: var(--colour-primary); text-decoration: none; transition: color var(--transition); }
+a:hover { color: var(--colour-mid); }
+ul { list-style: none; }
+
+.container { max-width: var(--container-width); margin: 0 auto; padding: 0 24px; }
+.container--narrow { max-width: 720px; }
+
+/* NAV */
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: var(--colour-dark); height: var(--nav-height); display: flex; align-items: center; }
+.nav__inner { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+.nav__logo { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: #fff; }
+.nav__logo:hover { color: var(--colour-primary); }
+.nav__meta { font-size: 0.85rem; color: rgba(255,255,255,0.4); }
+
+/* PAGE HEADER */
+.page-header { padding: calc(var(--nav-height) + 48px) 0 48px; background: var(--colour-dark); }
+.page-header__eyebrow { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--colour-primary); font-family: var(--font-body); margin-bottom: 12px; }
+.page-header__title { font-size: clamp(2rem, 4vw, 2.8rem); color: #fff; margin-bottom: 12px; }
+.page-header__subtitle { color: rgba(255,255,255,0.6); font-size: 1.05rem; font-weight: 400; margin-bottom: 6px; }
+.page-header__meta { color: rgba(255,255,255,0.4); font-size: 0.85rem; }
+
+/* SECTIONS */
+.section { padding: 64px 0; }
+.section--alt { background: var(--colour-card); }
+.section__heading--with-rule { font-size: clamp(1.4rem, 2.5vw, 1.8rem); padding-bottom: 16px; border-bottom: 2px solid var(--colour-primary); margin-bottom: 32px; display: inline-block; }
+
+/* CLIENT BAR */
+.client-bar { background: var(--colour-bg); border: 1px solid var(--colour-border); border-radius: var(--radius); padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; box-shadow: var(--shadow-sm); }
+.client-bar__name { font-size: 1.1rem; font-weight: 700; color: var(--colour-dark); font-family: var(--font-heading); }
+.client-bar__meta { font-size: 0.875rem; color: var(--colour-text-muted); margin-top: 3px; }
+
+.risk-pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 18px; border-radius: var(--radius-pill); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+.risk-pill--red   { background: rgba(220,38,38,0.08);  color: var(--colour-red);     border: 1px solid rgba(220,38,38,0.2); }
+.risk-pill--amber { background: rgba(202,138,4,0.08);  color: var(--colour-warning); border: 1px solid rgba(202,138,4,0.2); }
+.risk-pill--green { background: rgba(22,163,74,0.08);  color: var(--colour-green);   border: 1px solid rgba(22,163,74,0.2); }
+.risk-pill__dot { width: 7px; height: 7px; border-radius: 50%; }
+.risk-pill--red   .risk-pill__dot { background: var(--colour-red); }
+.risk-pill--amber .risk-pill__dot { background: var(--colour-warning); }
+.risk-pill--green .risk-pill__dot { background: var(--colour-green); }
+
+/* KPI CARDS */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 36px; }
+.kpi-card { background: var(--colour-card); border: 1px solid var(--colour-border); border-radius: var(--radius); padding: 22px 20px; box-shadow: var(--shadow-sm); }
+.kpi-card--alert { border-color: rgba(220,38,38,0.25); }
+.kpi-card__label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--colour-text-muted); margin-bottom: 10px; }
+.kpi-card__value { font-family: var(--font-heading); font-size: 2rem; font-weight: 700; color: var(--colour-dark); line-height: 1; }
+.kpi-card__value--red   { color: var(--colour-red); }
+.kpi-card__value--amber { color: var(--colour-warning); }
+.kpi-card__sub { font-size: 0.82rem; color: var(--colour-text-muted); margin-top: 6px; }
+
+/* TOP 3 RISKS */
+.risks-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--colour-text-muted); margin-bottom: 14px; }
+.risk-list { display: flex; flex-direction: column; gap: 12px; }
+.risk-item { background: var(--colour-card); border: 1px solid var(--colour-border); border-radius: var(--radius); padding: 20px 20px 20px 24px; display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center; transition: box-shadow var(--transition); }
+.risk-item:hover { box-shadow: var(--shadow-md); }
+.risk-item--critical { border-left: 4px solid var(--colour-red); }
+.risk-item--high     { border-left: 4px solid var(--colour-warning); }
+.risk-item__left { display: flex; align-items: center; gap: 16px; }
+.risk-item__num { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; line-height: 1; min-width: 28px; }
+.risk-item--critical .risk-item__num { color: rgba(220,38,38,0.2); }
+.risk-item--high     .risk-item__num { color: rgba(202,138,4,0.25); }
+.risk-item__title { font-size: 0.95rem; font-weight: 600; color: var(--colour-dark); font-family: var(--font-body); margin-bottom: 4px; }
+.risk-item__desc  { font-size: 0.875rem; color: var(--colour-text-muted); line-height: 1.55; }
+.risk-item__cost { text-align: right; white-space: nowrap; }
+.risk-item__amount { font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; color: var(--colour-red); }
+.risk-item--high .risk-item__amount { color: var(--colour-warning); }
+.risk-item__per { font-size: 0.75rem; color: var(--colour-text-muted); margin-top: 2px; }
+
+/* SCORECARD */
+.scorecard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-bottom: 28px; }
+.scorecard-card { background: var(--colour-card); border: 1px solid var(--colour-border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow-sm); }
+.scorecard-card__title { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--colour-text-muted); margin-bottom: 20px; }
+
+/* Bar chart */
+.bar-rows { display: flex; flex-direction: column; gap: 11px; }
+.bar-row { display: flex; align-items: center; gap: 10px; }
+.bar-label { font-size: 0.82rem; color: var(--colour-text-muted); width: 120px; text-align: right; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar-track { flex: 1; height: 7px; background: var(--colour-bg); border-radius: 4px; overflow: hidden; border: 1px solid var(--colour-border); }
+.bar-fill { height: 100%; border-radius: 4px; }
+.bar-fill--red   { background: var(--colour-red); }
+.bar-fill--amber { background: var(--colour-warning); }
+.bar-fill--green { background: var(--colour-green); }
+.bar-score { font-size: 0.82rem; font-weight: 600; width: 26px; flex-shrink: 0; }
+.bar-score--red   { color: var(--colour-red); }
+.bar-score--amber { color: var(--colour-warning); }
+.bar-score--green { color: var(--colour-green); }
+
+/* Verbal ratings table */
+.ratings-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.ratings-table th { text-align: left; padding: 8px 12px; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--colour-text-muted); border-bottom: 2px solid var(--colour-border); background: var(--colour-bg); }
+.ratings-table td { padding: 11px 12px; border-bottom: 1px solid var(--colour-border); vertical-align: middle; }
+.ratings-table tr:last-child td { border-bottom: none; }
+.ratings-table tr:hover td { background: rgba(217,119,6,0.02); }
+.col-pillar { color: var(--colour-text-muted); font-size: 0.82rem; }
+.col-sub    { color: var(--colour-dark); font-weight: 500; }
+.col-score  { font-family: var(--font-heading); font-weight: 700; }
+.col-score--red   { color: var(--colour-red); }
+.col-score--amber { color: var(--colour-warning); }
+.col-score--green { color: var(--colour-green); }
+
+.badge { display: inline-block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; padding: 3px 10px; border-radius: var(--radius-pill); }
+.badge--critical { background: rgba(220,38,38,0.1);  color: var(--colour-red); }
+.badge--high     { background: rgba(202,138,4,0.1);  color: var(--colour-warning); }
+.badge--good     { background: rgba(22,163,74,0.08); color: var(--colour-green); }
+
+/* CTA */
+.callout--amber { border: 2px solid var(--colour-primary); background: rgba(217,119,6,0.04); border-radius: var(--radius); padding: 40px; }
+.callout__heading { font-size: 1.3rem; margin-bottom: 12px; }
+.callout__text { font-size: 1rem; color: var(--colour-text-muted); margin-bottom: 24px; line-height: 1.7; }
+.callout__note { font-size: 0.875rem; color: var(--colour-text-muted); margin-top: 16px; font-style: italic; }
+
+.btn { display: inline-block; font-family: var(--font-body); font-size: 1rem; font-weight: 600; padding: 14px 32px; border-radius: var(--radius-pill); border: none; cursor: pointer; transition: all var(--transition); text-align: center; }
+.btn--primary { background: var(--colour-primary); color: #fff; }
+.btn--primary:hover { background: var(--colour-mid); color: #fff; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+
+/* FOOTER */
+.footer { background: var(--colour-dark); color: rgba(255,255,255,0.7); padding: 48px 0 32px; }
+.footer__inner { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+.footer__name { font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; color: #fff; }
+.footer__tagline { font-size: 0.85rem; color: rgba(255,255,255,0.4); margin-top: 2px; }
+.footer__copy { font-size: 0.78rem; color: rgba(255,255,255,0.3); margin-top: 8px; }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .scorecard-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  :root { --nav-height: 60px; }
+  .kpi-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .risk-item { grid-template-columns: 1fr; }
+  .risk-item__cost { text-align: left; }
+  .callout--amber { padding: 24px; }
+}
+@media print {
+  .nav { position: static; }
+  .page-header { padding-top: 32px; }
+  .btn { display: none; }
+  body { background: #fff; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="container">
+    <div class="nav__inner">
+      <a class="nav__logo" href="https://kristinabachova.com">kristinabachova.com</a>
+      <span class="nav__meta">Power BI Health Check — Confidential</span>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<header class="page-header">
+  <div class="container">
+    <div class="page-header__eyebrow">Power BI Health Check</div>
+    <h1 class="page-header__title">Your Results, {{ClientName}}</h1>
+    <p class="page-header__subtitle">{{Company}} · {{CompanySize}} employees · {{NumPBIUsers}} Power BI users</p>
+    <p class="page-header__meta">Assessment completed {{Timestamp}} · Prepared by Kristina Bachová</p>
+  </div>
+</header>
+
+
+<!-- ══════════════════════════════════════
+     EXECUTIVE SUMMARY
+═══════════════════════════════════════ -->
+<section class="section section--alt">
+  <div class="container">
+    <h2 class="section__heading--with-rule">Executive summary</h2>
+
+    <!-- Client bar -->
+    <div class="client-bar">
+      <div>
+        <div class="client-bar__name">{{Company}}</div>
+        <div class="client-bar__meta">{{ClientName}} · {{CompanySize}} employees · {{NumPBIUsers}} Power BI users · {{NumPBIDevelopers}} developers</div>
+      </div>
+      <span class="risk-pill risk-pill--red">
+        <span class="risk-pill__dot"></span>High risk
+      </span>
+    </div>
+
+    <!-- 4 KPI cards -->
+    <div class="kpi-grid">
+      <div class="kpi-card kpi-card--alert">
+        <div class="kpi-card__label">Overall risk score</div>
+        <div class="kpi-card__value kpi-card__value--red">{{OverallRiskScore}}</div>
+        <div class="kpi-card__sub">out of 100</div>
+      </div>
+      <div class="kpi-card kpi-card--alert">
+        <div class="kpi-card__label">Annual cost of inaction</div>
+        <div class="kpi-card__value kpi-card__value--red">{{TotalAnnualCost}}</div>
+        <div class="kpi-card__sub">est. wasted per year</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-card__label">Hours lost / month</div>
+        <div class="kpi-card__value kpi-card__value--amber">{{TotalHoursLost}}</div>
+        <div class="kpi-card__sub">across {{NumPBIUsers}} users</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-card__label">Critical issues</div>
+        <div class="kpi-card__value kpi-card__value--red">{{CriticalCount}}</div>
+        <div class="kpi-card__sub">require immediate action</div>
+      </div>
+    </div>
+
+    <!-- Top 3 risks -->
+    <div class="risks-label">Top 3 risks by impact</div>
+    <div class="risk-list">
+
+      <div class="risk-item risk-item--critical">
+        <div class="risk-item__left">
+          <div class="risk-item__num">01</div>
+          <div>
+            <div class="risk-item__title">No row-level security on financial reports</div>
+            <div class="risk-item__desc">All users can see all company financial data regardless of role or region.</div>
+          </div>
+        </div>
+        <div class="risk-item__cost">
+          <div class="risk-item__amount">€18,400</div>
+          <div class="risk-item__per">per year</div>
+        </div>
+      </div>
+
+      <div class="risk-item risk-item--critical">
+        <div class="risk-item__left">
+          <div class="risk-item__num">02</div>
+          <div>
+            <div class="risk-item__title">Reports built on non-certified datasets</div>
+            <div class="risk-item__desc">14 reports connect directly to raw sources, bypassing governed models.</div>
+          </div>
+        </div>
+        <div class="risk-item__cost">
+          <div class="risk-item__amount">€11,200</div>
+          <div class="risk-item__per">per year</div>
+        </div>
+      </div>
+
+      <div class="risk-item risk-item--high">
+        <div class="risk-item__left">
+          <div class="risk-item__num">03</div>
+          <div>
+            <div class="risk-item__title">No deployment pipeline or version control</div>
+            <div class="risk-item__desc">Changes are pushed directly to production with no rollback capability.</div>
+          </div>
+        </div>
+        <div class="risk-item__cost">
+          <div class="risk-item__amount" style="color:var(--colour-warning)">€9,600</div>
+          <div class="risk-item__per">per year</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     PILLAR SCORECARD
+═══════════════════════════════════════ -->
+<section class="section">
+  <div class="container">
+    <h2 class="section__heading--with-rule">Pillar scorecard</h2>
+
+    <!-- Radar + bar chart row -->
+    <div class="scorecard-grid">
+
+      <div class="scorecard-card">
+        <div class="scorecard-card__title">Score by pillar</div>
+        <svg viewBox="0 0 320 260" width="100%" style="display:block; max-height:240px;">
+          <!-- Outer ring -->
+          <polygon points="160,24 248,76 248,180 160,232 72,180 72,76"    fill="none" stroke="#E7E5E4" stroke-width="1"/>
+          <polygon points="160,50 226,88  226,164 160,202 94,164 94,88"    fill="none" stroke="#E7E5E4" stroke-width="1"/>
+          <polygon points="160,76 204,100 204,148 160,172 116,148 116,100" fill="none" stroke="#E7E5E4" stroke-width="1"/>
+          <polygon points="160,102 182,114 182,134 160,146 138,134 138,114" fill="none" stroke="#E7E5E4" stroke-width="1"/>
+          <!-- Spokes -->
+          <line x1="160" y1="24"  x2="160" y2="232" stroke="#E7E5E4" stroke-width="1"/>
+          <line x1="248" y1="76"  x2="72"  y2="180" stroke="#E7E5E4" stroke-width="1"/>
+          <line x1="248" y1="180" x2="72"  y2="76"  stroke="#E7E5E4" stroke-width="1"/>
+          <!-- Data shape (Gov 28, Security 32, DataModel 55, Reports 61, Adoption 74, Performance 80) -->
+          <polygon
+            points="160,130 196,107 206,148 160,174 114,148 124,107"
+            fill="rgba(217,119,6,0.12)" stroke="#D97706" stroke-width="2" stroke-linejoin="round"/>
+          <!-- Labels -->
+          <text x="160" y="15"  text-anchor="middle" font-family="'Source Sans 3',sans-serif" font-size="11" fill="#78716C">Governance</text>
+          <text x="255" y="74"  text-anchor="start"  font-family="'Source Sans 3',sans-serif" font-size="11" fill="#78716C">Security</text>
+          <text x="255" y="185" text-anchor="start"  font-family="'Source Sans 3',sans-serif" font-size="11" fill="#78716C">Data model</text>
+          <text x="160" y="249" text-anchor="middle" font-family="'Source Sans 3',sans-serif" font-size="11" fill="#78716C">Reports</text>
+          <text x="65"  y="185" text-anchor="end"    font-family="'Source Sans 3',sans-serif" font-size="11" fill="#78716C">Adoption</text>
+          <text x="65"  y="74"  text-anchor="end"    font-family="'Source Sans 3',sans-serif" font-size="11" fill="#78716C">Performance</text>
+        </svg>
+      </div>
+
+      <div class="scorecard-card">
+        <div class="scorecard-card__title">Category scores — worst first</div>
+        <div class="bar-rows">
+          <div class="bar-row">
+            <div class="bar-label">Governance</div>
+            <div class="bar-track"><div class="bar-fill bar-fill--red"   style="width:28%"></div></div>
+            <div class="bar-score bar-score--red">28</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Security &amp; access</div>
+            <div class="bar-track"><div class="bar-fill bar-fill--red"   style="width:32%"></div></div>
+            <div class="bar-score bar-score--red">32</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Data model design</div>
+            <div class="bar-track"><div class="bar-fill bar-fill--amber" style="width:55%"></div></div>
+            <div class="bar-score bar-score--amber">55</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Report quality</div>
+            <div class="bar-track"><div class="bar-fill bar-fill--amber" style="width:61%"></div></div>
+            <div class="bar-score bar-score--amber">61</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Adoption &amp; training</div>
+            <div class="bar-track"><div class="bar-fill bar-fill--green" style="width:74%"></div></div>
+            <div class="bar-score bar-score--green">74</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Performance</div>
+            <div class="bar-track"><div class="bar-fill bar-fill--green" style="width:80%"></div></div>
+            <div class="bar-score bar-score--green">80</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Verbal ratings table -->
+    <div class="scorecard-card" style="padding:0; overflow:hidden;">
+      <table class="ratings-table">
+        <thead>
+          <tr>
+            <th style="padding-left:20px; width:18%">Pillar</th>
+            <th style="width:26%">Subcategory</th>
+            <th style="text-align:center; width:16%">Rating</th>
+            <th style="text-align:right; width:10%">Score</th>
+            <th style="text-align:center; width:10%">Weight</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-pillar" style="padding-left:20px">Governance</td>
+            <td class="col-sub">Certification process</td>
+            <td style="text-align:center"><span class="badge badge--critical">Critical</span></td>
+            <td class="col-score col-score--red"   style="text-align:right">20</td>
+            <td style="text-align:center; font-size:0.82rem; color:var(--colour-text-muted)">High</td>
+          </tr>
+          <tr>
+            <td class="col-pillar" style="padding-left:20px">Governance</td>
+            <td class="col-sub">Workspace structure</td>
+            <td style="text-align:center"><span class="badge badge--critical">Critical</span></td>
+            <td class="col-score col-score--red"   style="text-align:right">35</td>
+            <td style="text-align:center; font-size:0.82rem; color:var(--colour-text-muted)">High</td>
+          </tr>
+          <tr>
+            <td class="col-pillar" style="padding-left:20px">Security</td>
+            <td class="col-sub">RLS implementation</td>
+            <td style="text-align:center"><span class="badge badge--critical">Critical</span></td>
+            <td class="col-score col-score--red"   style="text-align:right">15</td>
+            <td style="text-align:center; font-size:0.82rem; color:var(--colour-text-muted)">High</td>
+          </tr>
+          <tr>
+            <td class="col-pillar" style="padding-left:20px">Security</td>
+            <td class="col-sub">Tenant settings</td>
+            <td style="text-align:center"><span class="badge badge--high">Needs work</span></td>
+            <td class="col-score col-score--amber" style="text-align:right">48</td>
+            <td style="text-align:center; font-size:0.82rem; color:var(--colour-text-muted)">Medium</td>
+          </tr>
+          <tr>
+            <td class="col-pillar" style="padding-left:20px">Data model</td>
+            <td class="col-sub">Star schema adherence</td>
+            <td style="text-align:center"><span class="badge badge--high">Needs work</span></td>
+            <td class="col-score col-score--amber" style="text-align:right">52</td>
+            <td style="text-align:center; font-size:0.82rem; color:var(--colour-text-muted)">High</td>
+          </tr>
+          <tr>
+            <td class="col-pillar" style="padding-left:20px">Adoption</td>
+            <td class="col-sub">Self-service capability</td>
+            <td style="text-align:center"><span class="badge badge--good">Good</span></td>
+            <td class="col-score col-score--green" style="text-align:right">76</td>
+            <td style="text-align:center; font-size:0.82rem; color:var(--colour-text-muted)">Medium</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- CTA -->
+<section class="section section--alt">
+  <div class="container container--narrow">
+    <div class="callout--amber">
+      <h2 class="callout__heading">Ready to fix this?</h2>
+      <p class="callout__text">These results give us a clear starting point. In a 30-minute discovery call we'll walk through your priorities, discuss what each issue is actually costing your team, and map out a realistic remediation plan.</p>
+      <a class="btn btn--primary" href="https://calendly.com/kristinabachova">Book your discovery call</a>
+      <p class="callout__note">A full breakdown of every identified issue — including effort estimates, recommended fixes, and a prioritised action plan — is delivered as part of the Health Check engagement.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__inner">
+      <div>
+        <div class="footer__name">Kristina Bachová</div>
+        <div class="footer__tagline">Independent Power BI Consultant · Algarve, Portugal</div>
+      </div>
+      <div class="footer__copy">
+        This report is confidential and prepared exclusively for {{ClientName}} at {{Company}}.<br>
+        © 2026 kristinabachova.com
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================
+     DEV: AUTO-FILL BUTTON (remove before delivering to client)
+============================================================ -->
+<div id="devBar" style="position:fixed;bottom:20px;right:20px;z-index:9999;">
+  <button onclick="devFill()" style="background:#7C3AED;color:#fff;font-family:monospace;font-size:0.8rem;font-weight:700;padding:10px 18px;border:none;border-radius:6px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.25);letter-spacing:0.05em;">
+    ⚙ DEV: Fill test data
+  </button>
+</div>
+
+<script>
+function devFill() {
+  const data = {
+    ClientName:      "Jan Kowalski",
+    Company:         "Acme Manufacturing B.V.",
+    CompanySize:     "51\u2013200",
+    NumPBIUsers:     "18",
+    NumPBIDevelopers:"3",
+    Timestamp:       "27 March 2026",
+    OverallRiskScore:"28",
+    TotalAnnualCost: "\u20ac39,200",
+    TotalHoursLost:  "47h",
+    CriticalCount:   "3"
+  };
+  document.body.innerHTML = document.body.innerHTML.replace(
+    /\{\{(\w+)\}\}/g,
+    (_, key) => data[key] ?? `{{${key}}}`
+  );
+}
+</script>
+
+</body>
+</html>
