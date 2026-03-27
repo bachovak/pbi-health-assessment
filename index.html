@@ -1019,6 +1019,152 @@
             }
             .priority-subcategory .subcat-name { flex: 1 1 auto; min-width: 0; }
         }
+
+        /* ============================================================
+           REPORT RESULTS — full-screen overlay
+        ============================================================ */
+        body.report-mode { overflow: hidden; }
+
+        #screen-thankyou.active {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            overflow-y: auto;
+            z-index: 200;
+            background: #FAF7F5;
+            padding: 0;
+            border-radius: 0;
+        }
+
+        .rpt-container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+        /* Nav */
+        .rpt-nav { background: #1C1917; height: 64px; display: flex; align-items: center; position: sticky; top: 0; z-index: 10; }
+        .rpt-nav__inner { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+        .rpt-nav__logo { font-family: 'Playfair Display', Georgia, serif; font-size: 1.1rem; color: #fff; text-decoration: none; }
+        .rpt-nav__label { font-size: 0.78rem; color: rgba(255,255,255,0.4); }
+
+        /* Header */
+        .rpt-header { background: #1C1917; padding: 52px 0 44px; }
+        .rpt-header__eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #D97706; margin-bottom: 12px; }
+        .rpt-header__title { font-family: 'Playfair Display', Georgia, serif; font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 700; color: #fff; line-height: 1.15; margin-bottom: 12px; }
+        .rpt-header__sub { font-size: 1rem; color: rgba(255,255,255,0.65); margin-bottom: 6px; }
+        .rpt-header__meta { font-size: 0.82rem; color: rgba(255,255,255,0.35); }
+
+        /* Sections */
+        .rpt-section { padding: 52px 0; }
+        .rpt-section--white { background: #fff; }
+        .rpt-section--warm  { background: #FAF7F5; }
+        .rpt-section__title { font-family: 'Playfair Display', Georgia, serif; font-size: 1.5rem; font-weight: 700; color: #1C1917; padding-bottom: 14px; border-bottom: 2px solid #D97706; margin-bottom: 28px; display: inline-block; }
+
+        /* Client bar */
+        .rpt-client-bar { background: #FAF7F5; border: 1px solid #E7E5E4; border-radius: 8px; padding: 18px 22px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+        .rpt-client-bar__name { font-family: 'Playfair Display', Georgia, serif; font-size: 1.15rem; font-weight: 700; color: #1C1917; margin-bottom: 3px; }
+        .rpt-client-bar__meta { font-size: 0.875rem; color: #78716C; }
+
+        /* Risk pill */
+        .rpt-risk-pill { display: inline-flex; align-items: center; gap: 7px; padding: 6px 14px; border-radius: 100px; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; flex-shrink: 0; }
+        .rpt-risk-pill__dot { width: 7px; height: 7px; border-radius: 50%; }
+        .rpt-risk-pill--red   { background: rgba(220,38,38,0.08);  color: #DC2626; border: 1px solid rgba(220,38,38,0.2); }
+        .rpt-risk-pill--red   .rpt-risk-pill__dot { background: #DC2626; }
+        .rpt-risk-pill--amber { background: rgba(202,138,4,0.08);  color: #CA8A04; border: 1px solid rgba(202,138,4,0.2); }
+        .rpt-risk-pill--amber .rpt-risk-pill__dot { background: #CA8A04; }
+        .rpt-risk-pill--green { background: rgba(22,163,74,0.08);  color: #16A34A; border: 1px solid rgba(22,163,74,0.2); }
+        .rpt-risk-pill--green .rpt-risk-pill__dot { background: #16A34A; }
+
+        /* KPI grid */
+        .rpt-kpi-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 36px; }
+        .rpt-kpi-card { background: #fff; border: 1px solid #E7E5E4; border-radius: 8px; padding: 20px 22px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+        .rpt-kpi-card__label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #78716C; margin-bottom: 10px; }
+        .rpt-kpi-card__value { font-family: 'Playfair Display', Georgia, serif; font-size: 2rem; font-weight: 700; line-height: 1; margin-bottom: 5px; }
+        .rpt-kpi-card__sub { font-size: 0.77rem; color: #78716C; }
+        .rpt-kpi-card__value--amber { color: #CA8A04; }
+        .rpt-kpi-card__value--red   { color: #DC2626; }
+        .rpt-kpi-card__value--green { color: #16A34A; }
+
+        /* Top risks */
+        .rpt-risks-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #78716C; margin-bottom: 12px; }
+        .rpt-risk-item { background: #fff; border: 1px solid #E7E5E4; border-left-width: 4px; border-radius: 8px; padding: 16px 18px; display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center; margin-bottom: 10px; }
+        .rpt-risk-item--critical { border-left-color: #DC2626; }
+        .rpt-risk-item--high     { border-left-color: #CA8A04; }
+        .rpt-risk-item__left { display: flex; align-items: flex-start; gap: 14px; }
+        .rpt-risk-item__num { font-family: 'Playfair Display', Georgia, serif; font-size: 1.5rem; font-weight: 700; line-height: 1; min-width: 28px; flex-shrink: 0; }
+        .rpt-risk-item--critical .rpt-risk-item__num { color: rgba(220,38,38,0.2); }
+        .rpt-risk-item--high     .rpt-risk-item__num { color: rgba(202,138,4,0.25); }
+        .rpt-risk-item__title { font-size: 0.92rem; font-weight: 700; color: #1C1917; margin-bottom: 4px; }
+        .rpt-risk-item__desc  { font-size: 0.85rem; color: #78716C; line-height: 1.5; }
+        .rpt-risk-item__cost  { text-align: right; white-space: nowrap; }
+        .rpt-risk-item__amount { font-family: 'Playfair Display', Georgia, serif; font-size: 1.1rem; font-weight: 700; color: #DC2626; }
+        .rpt-risk-item--high .rpt-risk-item__amount { color: #CA8A04; }
+        .rpt-risk-item__per   { font-size: 0.72rem; color: #78716C; margin-top: 2px; }
+
+        /* Scorecard charts */
+        .rpt-charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .rpt-chart-card { background: #fff; border: 1px solid #E7E5E4; border-radius: 8px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+        .rpt-chart-card__title { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #78716C; margin-bottom: 24px; }
+
+        /* Bar chart */
+        .rpt-bar-list { display: flex; flex-direction: column; gap: 13px; }
+        .rpt-bar-row  { display: flex; align-items: center; gap: 10px; }
+        .rpt-bar-label { font-size: 0.79rem; color: #78716C; text-align: right; width: 164px; flex-shrink: 0; line-height: 1.3; }
+        .rpt-bar-track { flex: 1; height: 8px; background: #E7E5E4; border-radius: 100px; overflow: hidden; }
+        .rpt-bar-fill  { height: 100%; border-radius: 100px; }
+        .rpt-bar-fill--red   { background: #DC2626; }
+        .rpt-bar-fill--amber { background: #CA8A04; }
+        .rpt-bar-fill--green { background: #16A34A; }
+        .rpt-bar-score { font-family: 'Playfair Display', Georgia, serif; font-size: 0.9rem; font-weight: 700; min-width: 28px; }
+        .rpt-bar-score--red   { color: #DC2626; }
+        .rpt-bar-score--amber { color: #CA8A04; }
+        .rpt-bar-score--green { color: #16A34A; }
+
+        /* Subcategory table */
+        .rpt-table-card { background: #fff; border: 1px solid #E7E5E4; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+        .rpt-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+        .rpt-table th { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #78716C; background: #FAF7F5; padding: 12px 16px; text-align: left; border-bottom: 1px solid #E7E5E4; }
+        .rpt-table td { padding: 11px 16px; border-bottom: 1px solid #E7E5E4; color: #44403C; vertical-align: middle; }
+        .rpt-table tbody tr:last-child td { border-bottom: none; }
+        .rpt-table tbody tr:hover td { background: rgba(250,247,245,0.6); }
+        .rpt-badge { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+        .rpt-badge--critical { background: rgba(220,38,38,0.08);  color: #DC2626; }
+        .rpt-badge--high     { background: rgba(202,138,4,0.10);  color: #CA8A04; }
+        .rpt-badge--good     { background: rgba(22,163,74,0.08);  color: #16A34A; }
+        .rpt-score-cell { font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 1rem; }
+        .rpt-score-cell--red   { color: #DC2626; }
+        .rpt-score-cell--amber { color: #CA8A04; }
+        .rpt-score-cell--green { color: #16A34A; }
+
+        /* CTA */
+        .rpt-cta-wrap { max-width: 660px; margin: 0 auto; }
+        .rpt-cta-box  { border: 2px solid #D97706; border-radius: 8px; background: rgba(217,119,6,0.04); padding: 40px 48px; text-align: center; }
+        .rpt-cta-box h2 { font-family: 'Playfair Display', Georgia, serif; font-size: 1.7rem; font-weight: 700; color: #1C1917; margin-bottom: 14px; }
+        .rpt-cta-box p  { font-size: 0.97rem; color: #44403C; line-height: 1.65; margin-bottom: 26px; }
+        .rpt-cta-note   { font-size: 0.82rem; font-style: italic; color: #78716C; line-height: 1.6; margin-top: 16px; display: block; }
+        .rpt-cta-btn    { display: inline-block; background: #D97706; color: #fff; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 0.95rem; font-weight: 600; padding: 14px 32px; border-radius: 100px; text-decoration: none; }
+        .rpt-cta-btn:hover { background: #92400E; }
+
+        /* Footer */
+        .rpt-footer { background: #1C1917; padding: 44px 0 36px; text-align: center; }
+        .rpt-footer__name    { font-family: 'Playfair Display', Georgia, serif; font-size: 1.1rem; color: #fff; margin-bottom: 6px; }
+        .rpt-footer__tagline { font-size: 0.82rem; color: rgba(255,255,255,0.4); margin-bottom: 16px; }
+        .rpt-footer__legal   { font-size: 0.75rem; color: rgba(255,255,255,0.25); line-height: 1.65; }
+        .rpt-footer__restart { margin-top: 24px; }
+
+        @media (max-width: 900px) {
+            .rpt-kpi-grid    { grid-template-columns: repeat(2,1fr); }
+            .rpt-charts-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 640px) {
+            .rpt-kpi-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .rpt-risk-item { grid-template-columns: 1fr; }
+            .rpt-risk-item__cost { text-align: left; }
+            .rpt-cta-box  { padding: 28px 20px; }
+            .rpt-bar-label { width: 110px; font-size: 0.74rem; }
+            .rpt-client-bar { flex-direction: column; align-items: flex-start; }
+            .rpt-container { padding: 0 16px; }
+        }
+        @media print {
+            .rpt-nav { position: static; }
+            body.report-mode #screen-thankyou.active { position: static; overflow: visible; }
+        }
     </style>
 </head>
 <body>
@@ -1131,40 +1277,11 @@
             </div>
             <button class="btn btn-primary" id="btnNext" onclick="navigateCategory(1)">Next &rarr;</button>
         </div>
-        <!-- DEV ONLY: uncomment to enable auto-fill for testing
-        <div style="margin-top:20px; text-align:center; border-top:1px dashed #ccc; padding-top:15px;">
-            <button class="btn btn-secondary" onclick="devFillAnswers()" style="background:#f0f0f0; color:#666; font-size:0.8rem;">Dev: Auto-fill Answers</button>
-        </div>
-        -->
     </div>
 
-    <!-- SCREEN 3: Thank you -->
+    <!-- SCREEN 3: Report results -->
     <div class="screen" id="screen-thankyou">
-        <div class="card thank-you">
-            <div class="check-icon">&#10003;</div>
-            <h2>Assessment Complete!</h2>
-            <p>Thank you, <strong id="thankName"></strong>. Your Power BI Health Assessment has been recorded.</p>
-            <div id="submitStatus" style="margin-bottom:20px;"></div>
-            <div class="results-visuals" id="resultsVisuals"></div>
-            <div class="priority-summary" id="prioritySummary"></div>
-            <div class="cta-section" style="margin: 24px 0;">
-                <button class="btn btn-success btn-cta" onclick="requestFollowUp()" style="font-size:1.1rem; padding:16px 32px;">I want a follow up</button>
-            </div>
-
-            <!-- Calendly booking (shown after follow-up request) -->
-            <div id="calendly-section" style="display:none; margin: 0 0 24px;">
-                <div class="gdpr-notice" style="margin-bottom:16px;">
-                    <p>The booking calendar below is provided by <strong>Calendly</strong> and may set cookies on your device. By loading it, you accept <a href="https://calendly.com/privacy" target="_blank" rel="noopener">Calendly's Privacy Policy</a>.</p>
-                    <button class="btn btn-primary" id="loadCalendlyBtn" onclick="loadCalendly()" style="margin-top:8px;">Load booking calendar</button>
-                </div>
-                <div id="calendly-widget" style="display:none;">
-                    <div class="calendly-inline-widget" data-url="https://calendly.com/bachovak/30min" style="min-width:320px;height:700px;"></div>
-                </div>
-            </div>
-            <div class="download-actions">
-                <button class="btn btn-primary" onclick="restartAssessment()">Start New Assessment</button>
-            </div>
-        </div>
+        <div id="report-output"></div>
     </div>
 </div>
 
@@ -2169,25 +2286,269 @@ function submitAssessment() {
 }
 
 function showThankYou(sheetsSaved) {
-    document.getElementById("thankName").textContent = clientInfo.name;
+    buildReport();
+    clearSavedProgress();
+    document.body.classList.add("report-mode");
+    showScreen("screen-thankyou");
+}
 
-    const statusEl = document.getElementById("submitStatus");
-    if (!sheetsSaved && GOOGLE_SCRIPT_URL) {
-        statusEl.innerHTML = '<div style="background:#fef7e0;color:#CA8A04;padding:12px;border-radius:8px;">Could not save to database. Please download the CSV below.</div>';
-    } else if (!GOOGLE_SCRIPT_URL) {
-        statusEl.innerHTML = '<div style="background:rgba(217,119,6,0.08);color:#D97706;padding:12px;border-radius:8px;">Please download your results as CSV below.</div>';
-    } else {
-        statusEl.innerHTML = '';
+// ============================================================
+// REPORT RESULTS
+// ============================================================
+function buildReport() {
+    const rate  = clientInfo.avgHourlyRate   || 50;
+    const devs  = clientInfo.numPBIDevelopers || 1;
+
+    // Category scores (weighted %)
+    const catScores = categories.map(cat => {
+        const catQs = questions.filter(q => q.catId === cat.id);
+        let wSum = 0, wMax = 0;
+        catQs.forEach(q => {
+            const a = answers[q.qid];
+            if (a && a.score !== undefined) { wSum += a.score * q.weight; wMax += 5 * q.weight; }
+        });
+        return { name: cat.name, pillar: cat.pillar, pct: wMax > 0 ? Math.round((wSum / wMax) * 100) : 0 };
+    });
+
+    // Pillar scores
+    const pillarNames = ["CoE", "BI Ops", "Reporting"];
+    const pillarScores = pillarNames.map(p => {
+        const cats = catScores.filter(c => c.pillar === p);
+        const avg = cats.length ? Math.round(cats.reduce((s, c) => s + c.pct, 0) / cats.length) : 0;
+        return { name: p, pct: avg };
+    });
+
+    const overallPct = Math.round(catScores.reduce((s, c) => s + c.pct, 0) / catScores.length);
+
+    // Risk items (non-Accept, non-zero risk)
+    const riskItems = [];
+    questions.forEach(q => {
+        const a = answers[q.qid];
+        if (!a || a.score === undefined) return;
+        const opt = q.options.find(o => o.score === a.score);
+        if (!opt || opt.priority === "Accept" || opt.risk === 0) return;
+        riskItems.push({
+            title: q.question,
+            desc: q.why,
+            priority: opt.priority,
+            annualCost: opt.risk * q.weight * devs * rate,
+            hoursMonth: (opt.risk * q.weight) / 8
+        });
+    });
+    riskItems.sort((a, b) => b.annualCost - a.annualCost);
+
+    const criticalCount  = riskItems.filter(r => r.priority === "Fix now").length;
+    const totalAnnualCost = riskItems.reduce((s, r) => s + r.annualCost, 0);
+    const totalHoursMonth = riskItems.reduce((s, r) => s + r.hoursMonth, 0);
+
+    // Helpers
+    function colClass(pct) { return pct < 40 ? "red" : pct < 70 ? "amber" : "green"; }
+    function colHex(pct)   { return pct < 40 ? "#DC2626" : pct < 70 ? "#CA8A04" : "#16A34A"; }
+    function pillClass(pct){ return pct < 40 ? "rpt-risk-pill--red" : pct < 70 ? "rpt-risk-pill--amber" : "rpt-risk-pill--green"; }
+    function pillLabel(pct){ return pct < 40 ? "High risk" : pct < 70 ? "Medium risk" : "Low risk"; }
+    function eur(n)  { return "\u20AC" + Math.round(n).toLocaleString("en-IE"); }
+    function hrs(h)  { return Math.round(h) + "h"; }
+    function bdgCls(p) { return p === "Fix now" ? "rpt-badge--critical" : p === "Plan" ? "rpt-badge--high" : "rpt-badge--good"; }
+    function bdgTxt(p) { return p === "Fix now" ? "Critical" : p === "Plan" ? "Needs work" : "Good"; }
+
+    // Radar SVG — 3-axis triangle (CoE top, BI Ops bottom-right, Reporting bottom-left)
+    function buildRadar() {
+        // Wider viewBox + more padding so all three labels have room
+        const cx = 190, cy = 148, maxR = 105;
+        const angles = [-Math.PI / 2, Math.PI / 6, 5 * Math.PI / 6];
+        const order  = ["CoE", "BI Ops", "Reporting"];
+        function pt(r, i) { return [cx + r * Math.cos(angles[i]), cy + r * Math.sin(angles[i])]; }
+        function ring(f) { return order.map((_, i) => pt(maxR * f, i).map(v => v.toFixed(1)).join(",")).join(" "); }
+        const dataPts = order.map((p, i) => { const s = (pillarScores.find(x => x.name === p) || {}).pct || 0; return pt(maxR * s / 100, i).map(v => v.toFixed(1)).join(","); }).join(" ");
+        const labelR  = maxR + 26;
+        // CoE top → centred; BI Ops bottom-right → start; Reporting bottom-left → end
+        const anchors = ["middle", "start", "end"];
+        return `<svg viewBox="0 0 390 300" width="100%" style="display:block;margin:0 auto;">
+            ${[1, 0.75, 0.5, 0.25].map(f => `<polygon points="${ring(f)}" fill="none" stroke="#E7E5E4" stroke-width="1"/>`).join("")}
+            ${order.map((_, i) => { const [tx,ty] = pt(maxR,i); return `<line x1="${cx}" y1="${cy}" x2="${tx.toFixed(1)}" y2="${ty.toFixed(1)}" stroke="#E7E5E4" stroke-width="1"/>`; }).join("")}
+            <polygon points="${dataPts}" fill="rgba(217,119,6,0.12)" stroke="#D97706" stroke-width="2" stroke-linejoin="round"/>
+            ${order.map((p, i) => { const s = (pillarScores.find(x => x.name === p) || {}).pct || 0; const [dx,dy] = pt(maxR * s / 100, i); return `<circle cx="${dx.toFixed(1)}" cy="${dy.toFixed(1)}" r="4" fill="${colHex(s)}"/>`; }).join("")}
+            ${order.map((p, i) => { const [lx,ly] = pt(labelR, i); return `<text x="${lx.toFixed(1)}" y="${(ly+5).toFixed(1)}" text-anchor="${anchors[i]}" font-family="'Source Sans 3',sans-serif" font-size="13" font-weight="600" fill="#78716C">${p}</text>`; }).join("")}
+        </svg>`;
     }
 
-    // Build priority summary
-    buildResultsVisuals();
-    buildPrioritySummary();
+    // Category bar chart (sorted worst first)
+    function buildBars() {
+        return [...catScores].sort((a, b) => a.pct - b.pct).map(c => {
+            const col = colClass(c.pct);
+            return `<div class="rpt-bar-row">
+                <div class="rpt-bar-label">${c.name}</div>
+                <div class="rpt-bar-track"><div class="rpt-bar-fill rpt-bar-fill--${col}" style="width:${Math.max(c.pct,2)}%"></div></div>
+                <div class="rpt-bar-score rpt-bar-score--${col}">${c.pct}</div>
+            </div>`;
+        }).join("");
+    }
 
-    // Clear saved progress after successful submission
-    clearSavedProgress();
+    // Subcategory table (sorted worst first)
+    function buildTable() {
+        const subcatMap = {};
+        questions.forEach(q => {
+            const a = answers[q.qid];
+            if (!a || a.score === undefined) return;
+            const opt = q.options.find(o => o.score === a.score);
+            if (!opt) return;
+            if (!subcatMap[q.subcatId]) subcatMap[q.subcatId] = { pillar: (categories.find(c => c.id === q.catId) || {}).pillar || "", subcategory: q.subcategory, scores: [], priorities: [], weight: q.weight };
+            subcatMap[q.subcatId].scores.push(a.score);
+            subcatMap[q.subcatId].priorities.push(opt.priority);
+        });
+        return Object.values(subcatMap)
+            .map(s => {
+                const avg = s.scores.reduce((a,b) => a+b,0) / s.scores.length;
+                const pct = Math.round((avg / 5) * 100);
+                const worst = s.priorities.includes("Fix now") ? "Fix now" : s.priorities.includes("Plan") ? "Plan" : "Accept";
+                return { pillar: s.pillar, subcategory: s.subcategory, pct, priority: worst, weight: s.weight };
+            })
+            .sort((a, b) => { const o = {"Fix now":0,"Plan":1,"Accept":2}; return (o[a.priority]??2) - (o[b.priority]??2) || a.pct - b.pct; })
+            .map(r => {
+                const col = colClass(r.pct);
+                return `<tr>
+                    <td style="color:#78716C;font-size:0.82rem;padding-left:20px">${r.pillar}</td>
+                    <td style="font-weight:500;color:#1C1917">${r.subcategory}</td>
+                    <td style="text-align:center"><span class="rpt-badge ${bdgCls(r.priority)}">${bdgTxt(r.priority)}</span></td>
+                    <td style="text-align:right"><span class="rpt-score-cell rpt-score-cell--${col}">${r.pct}</span></td>
+                </tr>`;
+            }).join("");
+    }
 
-    showScreen("screen-thankyou");
+    // Top 3 risks
+    function buildTop3() {
+        const top3 = riskItems.slice(0, 3);
+        if (!top3.length) return `<p style="color:#78716C;font-style:italic">No significant risks identified — great work!</p>`;
+        return top3.map((r, i) => {
+            const crit = r.priority === "Fix now";
+            return `<div class="rpt-risk-item ${crit ? "rpt-risk-item--critical" : "rpt-risk-item--high"}">
+                <div class="rpt-risk-item__left">
+                    <div class="rpt-risk-item__num">0${i+1}</div>
+                    <div>
+                        <div class="rpt-risk-item__title">${r.title}</div>
+                        <div class="rpt-risk-item__desc">${r.desc}</div>
+                    </div>
+                </div>
+                <div class="rpt-risk-item__cost">
+                    <div class="rpt-risk-item__amount">${eur(r.annualCost)}</div>
+                    <div class="rpt-risk-item__per">per year</div>
+                </div>
+            </div>`;
+        }).join("");
+    }
+
+    const ts = new Date().toLocaleDateString("en-IE", { day:"numeric", month:"long", year:"numeric" });
+
+    document.getElementById("report-output").innerHTML = `
+        <nav class="rpt-nav">
+            <div class="rpt-container">
+                <div class="rpt-nav__inner">
+                    <a href="https://kristinabachova.com" class="rpt-nav__logo">kristinabachova.com</a>
+                    <span class="rpt-nav__label">Power BI Health Check &mdash; Confidential</span>
+                </div>
+            </div>
+        </nav>
+
+        <div class="rpt-header">
+            <div class="rpt-container">
+                <div class="rpt-header__eyebrow">Power BI Health Check</div>
+                <h1 class="rpt-header__title">Your Results, ${clientInfo.name}</h1>
+                <p class="rpt-header__sub">${clientInfo.company} &middot; ${clientInfo.companySize} employees &middot; ${clientInfo.numPBIUsers} Power BI users</p>
+                <p class="rpt-header__meta">Assessment completed ${ts} &middot; Prepared by Kristina Bách\u00F3v\u00E1</p>
+            </div>
+        </div>
+
+        <div class="rpt-section rpt-section--white">
+            <div class="rpt-container">
+                <div class="rpt-section__title">Executive Summary</div>
+                <div class="rpt-client-bar">
+                    <div>
+                        <div class="rpt-client-bar__name">${clientInfo.company}</div>
+                        <div class="rpt-client-bar__meta">${clientInfo.name} &middot; ${clientInfo.companySize} employees &middot; ${clientInfo.numPBIUsers} Power BI users &middot; ${clientInfo.numPBIDevelopers} developers</div>
+                    </div>
+                    <span class="rpt-risk-pill ${pillClass(overallPct)}"><span class="rpt-risk-pill__dot"></span>${pillLabel(overallPct)}</span>
+                </div>
+                <div class="rpt-kpi-grid">
+                    <div class="rpt-kpi-card">
+                        <div class="rpt-kpi-card__label">Overall Risk Score</div>
+                        <div class="rpt-kpi-card__value rpt-kpi-card__value--${colClass(overallPct)}">${overallPct}</div>
+                        <div class="rpt-kpi-card__sub">out of 100</div>
+                    </div>
+                    <div class="rpt-kpi-card">
+                        <div class="rpt-kpi-card__label">Annual Cost of Inaction</div>
+                        <div class="rpt-kpi-card__value rpt-kpi-card__value--red">${eur(totalAnnualCost)}</div>
+                        <div class="rpt-kpi-card__sub">estimated per year</div>
+                    </div>
+                    <div class="rpt-kpi-card">
+                        <div class="rpt-kpi-card__label">Hours Lost / Month</div>
+                        <div class="rpt-kpi-card__value rpt-kpi-card__value--amber">${hrs(totalHoursMonth)}</div>
+                        <div class="rpt-kpi-card__sub">across your BI team</div>
+                    </div>
+                    <div class="rpt-kpi-card">
+                        <div class="rpt-kpi-card__label">Critical Issues</div>
+                        <div class="rpt-kpi-card__value rpt-kpi-card__value--red">${criticalCount}</div>
+                        <div class="rpt-kpi-card__sub">require immediate attention</div>
+                    </div>
+                </div>
+                <div class="rpt-risks-label">Top 3 risks by impact</div>
+                ${buildTop3()}
+            </div>
+        </div>
+
+        <div class="rpt-section rpt-section--warm">
+            <div class="rpt-container">
+                <div class="rpt-section__title">Pillar Scorecard</div>
+                <div class="rpt-charts-grid">
+                    <div class="rpt-chart-card">
+                        <div class="rpt-chart-card__title">Score by Pillar</div>
+                        ${buildRadar()}
+                    </div>
+                    <div class="rpt-chart-card">
+                        <div class="rpt-chart-card__title">Category Scores &mdash; worst first</div>
+                        <div class="rpt-bar-list">${buildBars()}</div>
+                    </div>
+                </div>
+                <div class="rpt-table-card">
+                    <table class="rpt-table">
+                        <thead><tr>
+                            <th style="padding-left:20px;width:16%">Pillar</th>
+                            <th style="width:50%">Subcategory</th>
+                            <th style="text-align:center;width:20%">Rating</th>
+                            <th style="text-align:right;width:14%">Score</th>
+                        </tr></thead>
+                        <tbody>${buildTable()}</tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="rpt-section rpt-section--white">
+            <div class="rpt-container">
+                <div class="rpt-cta-wrap">
+                    <div class="rpt-cta-box">
+                        <h2>Ready to fix this?</h2>
+                        <p>These results give us a clear starting point. In a 30-minute discovery call we&rsquo;ll walk through your priorities, discuss what each issue is actually costing your team, and map out a realistic remediation plan.</p>
+                        <a href="https://calendly.com/bachovak/30min" class="rpt-cta-btn">Book your discovery call</a>
+                        <span class="rpt-cta-note">A full breakdown of every identified issue &mdash; including effort estimates, recommended fixes, and a prioritised action plan &mdash; is delivered as part of the Health Check engagement.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="rpt-footer">
+            <div class="rpt-container">
+                <div class="rpt-footer__name">Kristina Bách\u00F3v\u00E1</div>
+                <div class="rpt-footer__tagline">Independent Power BI Consultant &middot; Algarve, Portugal</div>
+                <div class="rpt-footer__legal">
+                    This report is confidential and prepared exclusively for ${clientInfo.name} at ${clientInfo.company}.<br>
+                    &copy; ${new Date().getFullYear()} kristinabachova.com
+                </div>
+                <div class="rpt-footer__restart">
+                    <button class="btn btn-secondary" onclick="restartAssessment()" style="opacity:0.45;font-size:0.82rem;padding:7px 18px;">Start New Assessment</button>
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 function buildResultsVisuals() {
@@ -2528,6 +2889,7 @@ function restartAssessment() {
     answers = {};
     clientInfo = {};
     currentCategory = 0;
+    document.body.classList.remove("report-mode");
 
     // Reset all radio buttons
     document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
