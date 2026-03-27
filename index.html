@@ -1035,11 +1035,11 @@
         <p>Evaluate your organization's Power BI maturity across 10 key dimensions</p>
     </div>
 
-    <!-- SCREEN 1: Welcome -->
-    <div class="screen active" id="screen-welcome">
+    <!-- SCREEN 1: Welcome (shown after assessment is complete) -->
+    <div class="screen" id="screen-welcome">
         <div class="card">
-            <h2>Welcome</h2>
-            <p class="subtitle">Please provide your details to begin the assessment. This takes about 15-20 minutes to complete.</p>
+            <h2>Almost there!</h2>
+            <p class="subtitle">Great job completing the assessment! Please fill in your details below to view your personalised results.</p>
 
             <div class="form-group">
                 <label for="clientName">Full Name *</label>
@@ -1080,7 +1080,7 @@
 
             <!-- GDPR consent -->
             <div class="gdpr-notice">
-                <p>By starting this assessment, you agree that the information you provide (name, company, email, and your answers) will be stored in a secure spreadsheet accessible only to Kristína Bachová. It is used solely to generate your personalised assessment results and, if requested, to follow up with recommendations. Your data will not be shared with third parties.</p>
+                <p>By submitting your details, you agree that the information you provide (name, company, email, and your answers) will be stored in a secure spreadsheet accessible only to Kristína Bachová. It is used solely to generate your personalised assessment results and, if requested, to follow up with recommendations. Your data will not be shared with third parties.</p>
                 <p>You may request access to or deletion of your data at any time by emailing <a href="mailto:info@kristinabachova.com">info@kristinabachova.com</a>. For full details, see the <a href="https://kristinabachova.com/#privacy-policy" target="_blank" rel="noopener">Privacy &amp; Cookie Policy</a>.</p>
                 <label class="gdpr-checkbox">
                     <input type="checkbox" id="gdprConsent">
@@ -1090,21 +1090,20 @@
 
             <div class="validation-msg" id="welcomeError">Please fill in all required fields and accept the data processing consent to continue.</div>
 
-            <div id="resumeSection" style="display:none; background:#f0fdf4; border:1px solid #16A34A; border-radius:8px; padding:16px; margin-bottom:20px;">
-                <strong style="color:#16A34A;">Saved progress found!</strong>
-                <p id="resumeInfo" style="font-size:0.9rem; color:#5f6368; margin:8px 0;"></p>
-                <div style="display:flex; gap:12px; flex-wrap:wrap;">
-                    <button class="btn btn-success" onclick="resumeAssessment()">Resume Assessment</button>
-                    <button class="btn btn-secondary" onclick="startFresh()">Start Fresh</button>
-                </div>
-            </div>
-
-            <button class="btn btn-primary" onclick="startAssessment()">Start Assessment &rarr;</button>
+            <button class="btn btn-primary" onclick="startAssessment()">View My Results &rarr;</button>
         </div>
     </div>
 
     <!-- SCREEN 2: Assessment -->
-    <div class="screen" id="screen-assessment">
+    <div class="screen active" id="screen-assessment">
+        <div id="resumeSection" style="display:none; background:#f0fdf4; border:1px solid #16A34A; border-radius:8px; padding:16px; margin-bottom:20px;">
+            <strong style="color:#16A34A;">Saved progress found!</strong>
+            <p id="resumeInfo" style="font-size:0.9rem; color:#5f6368; margin:8px 0;"></p>
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                <button class="btn btn-success" onclick="resumeAssessment()">Resume Assessment</button>
+                <button class="btn btn-secondary" onclick="startFresh()">Start Fresh</button>
+            </div>
+        </div>
         <div class="progress-container" id="progressContainer">
             <div class="progress-info">
                 <span><strong id="progressText">0 of 50</strong> questions answered</span>
@@ -1822,10 +1821,12 @@ function checkForSavedProgress() {
         if (saved) {
             const data = JSON.parse(saved);
             const answeredCount = Object.keys(data.answers || {}).filter(k => data.answers[k].score !== undefined).length;
-            if (answeredCount > 0 && data.clientInfo) {
+            if (answeredCount > 0) {
                 document.getElementById("resumeSection").style.display = "block";
+                const nameLabel = (data.clientInfo && data.clientInfo.name)
+                    ? `${data.clientInfo.name} (${data.clientInfo.company}) — ` : "";
                 document.getElementById("resumeInfo").textContent =
-                    `${data.clientInfo.name} (${data.clientInfo.company}) - ${answeredCount} of 50 questions answered`;
+                    `${nameLabel}${answeredCount} of 50 questions answered`;
             }
         }
     } catch (e) {}
@@ -1833,7 +1834,7 @@ function checkForSavedProgress() {
 
 function resumeAssessment() {
     if (loadProgress()) {
-        showScreen("screen-assessment");
+        document.getElementById("resumeSection").style.display = "none";
         goToCategory(0);
     }
 }
@@ -1946,7 +1947,11 @@ function startAssessment() {
     document.getElementById("welcomeError").classList.remove("show");
     clientInfo = { name, company, email, companySize, numPBIUsers: usersNum, numPBIDevelopers: developersNum, avgHourlyRate };
 
-    showScreen("screen-assessment");
+    // Fire and forget - send to Google Sheets in background, show results immediately
+    if (GOOGLE_SCRIPT_URL) {
+        sendToGoogleSheets();
+    }
+    showThankYou(true);
 }
 
 function showScreen(id) {
@@ -2078,17 +2083,19 @@ function loadProgress() {
         if (!saved) return false;
 
         const data = JSON.parse(saved);
-        if (!data.clientInfo || !data.answers) return false;
+        if (!data.answers) return false;
 
-        // Restore client info
-        clientInfo = data.clientInfo;
-        document.getElementById("clientName").value = clientInfo.name || "";
-        document.getElementById("companyName").value = clientInfo.company || "";
-        document.getElementById("clientEmail").value = clientInfo.email || "";
-        document.getElementById("companySize").value = clientInfo.companySize || "";
-        document.getElementById("numPBIUsers").value = clientInfo.numPBIUsers !== undefined ? clientInfo.numPBIUsers : "";
-        document.getElementById("numPBIDevelopers").value = clientInfo.numPBIDevelopers !== undefined ? clientInfo.numPBIDevelopers : "";
-        document.getElementById("avgHourlyRate").value = clientInfo.avgHourlyRate !== undefined && clientInfo.avgHourlyRate !== 50 ? clientInfo.avgHourlyRate : "";
+        // Restore client info if present (pre-filled into the details form)
+        if (data.clientInfo && data.clientInfo.name) {
+            clientInfo = data.clientInfo;
+            document.getElementById("clientName").value = clientInfo.name || "";
+            document.getElementById("companyName").value = clientInfo.company || "";
+            document.getElementById("clientEmail").value = clientInfo.email || "";
+            document.getElementById("companySize").value = clientInfo.companySize || "";
+            document.getElementById("numPBIUsers").value = clientInfo.numPBIUsers !== undefined ? clientInfo.numPBIUsers : "";
+            document.getElementById("numPBIDevelopers").value = clientInfo.numPBIDevelopers !== undefined ? clientInfo.numPBIDevelopers : "";
+            document.getElementById("avgHourlyRate").value = clientInfo.avgHourlyRate !== undefined && clientInfo.avgHourlyRate !== 50 ? clientInfo.avgHourlyRate : "";
+        }
 
         // Restore answers
         answers = data.answers;
@@ -2154,14 +2161,11 @@ function submitAssessment() {
 
     document.getElementById("assessmentError").classList.remove("show");
 
-    // Clear saved progress after successful submission
+    // Clear saved progress — assessment is complete
     clearSavedProgress();
 
-    // Fire and forget - send to Google Sheets in background, show results immediately
-    if (GOOGLE_SCRIPT_URL) {
-        sendToGoogleSheets();
-    }
-    showThankYou(true);
+    // Show the contact details form so the user can unlock their results
+    showScreen("screen-welcome");
 }
 
 function showThankYou(sheetsSaved) {
@@ -2544,7 +2548,7 @@ function restartAssessment() {
 
     updateProgress();
     goToCategory(0);
-    showScreen("screen-welcome");
+    showScreen("screen-assessment");
 }
 
 // Dev: Auto-fill answers only (not client info)
