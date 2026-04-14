@@ -11,15 +11,15 @@
 [hidden] { display: none !important; }
 
 :root {
-  --colour-primary:    #D97706;
-  --colour-accent:     #EA580C;
-  --colour-dark:       #1C1917;
-  --colour-mid:        #92400E;
-  --colour-bg:         #FAF7F5;
+  --colour-primary:    #2A5F8F;
+  --colour-accent:     #C2603A;
+  --colour-dark:       #1A3D5C;
+  --colour-mid:        #5B8DB8;
+  --colour-bg:         #F4F1EB;
   --colour-card:       #FFFFFF;
-  --colour-text:       #44403C;
-  --colour-text-muted: #78716C;
-  --colour-border:     #E7E5E4;
+  --colour-text:       #2A3A4A;
+  --colour-text-muted: #6A7E90;
+  --colour-border:     #D9D4C8;
   --colour-green:      #16A34A;
   --colour-warning:    #CA8A04;
   --colour-red:        #DC2626;
@@ -129,7 +129,7 @@ ul { list-style: none; }
 .ratings-table th { text-align: left; padding: 8px 12px; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--colour-text-muted); border-bottom: 2px solid var(--colour-border); background: var(--colour-bg); }
 .ratings-table td { padding: 11px 12px; border-bottom: 1px solid var(--colour-border); vertical-align: middle; }
 .ratings-table tr:last-child td { border-bottom: none; }
-.ratings-table tr:hover td { background: rgba(217,119,6,0.02); }
+.ratings-table tr:hover td { background: rgba(42,95,143,0.02); }
 .col-pillar { color: var(--colour-text-muted); font-size: 0.82rem; }
 .col-sub    { color: var(--colour-dark); font-weight: 500; }
 .col-score  { font-family: var(--font-heading); font-weight: 700; }
@@ -143,7 +143,7 @@ ul { list-style: none; }
 .badge--good     { background: rgba(22,163,74,0.08); color: var(--colour-green); }
 
 /* CTA */
-.callout--amber { border: 2px solid var(--colour-primary); background: rgba(217,119,6,0.04); border-radius: var(--radius); padding: 40px; }
+.callout--amber { border: 2px solid var(--colour-primary); background: rgba(42,95,143,0.04); border-radius: var(--radius); padding: 40px; }
 .callout__heading { font-size: 1.3rem; margin-bottom: 12px; }
 .callout__text { font-size: 1rem; color: var(--colour-text-muted); margin-bottom: 24px; line-height: 1.7; }
 .callout__note { font-size: 0.875rem; color: var(--colour-text-muted); margin-top: 16px; font-style: italic; }
@@ -309,25 +309,25 @@ ul { list-style: none; }
         <div class="scorecard-card__title">Score by pillar</div>
         <svg viewBox="0 0 320 260" width="100%" style="display:block; max-height:240px;">
           <!-- Outer ring -->
-          <polygon points="160,24 248,76 248,180 160,232 72,180 72,76"    fill="none" stroke="#E7E5E4" stroke-width="1"/>
-          <polygon points="160,50 226,88  226,164 160,202 94,164 94,88"    fill="none" stroke="#E7E5E4" stroke-width="1"/>
-          <polygon points="160,76 204,100 204,148 160,172 116,148 116,100" fill="none" stroke="#E7E5E4" stroke-width="1"/>
-          <polygon points="160,102 182,114 182,134 160,146 138,134 138,114" fill="none" stroke="#E7E5E4" stroke-width="1"/>
+          <polygon points="160,24 248,76 248,180 160,232 72,180 72,76"    fill="none" stroke="#D9D4C8" stroke-width="1"/>
+          <polygon points="160,50 226,88  226,164 160,202 94,164 94,88"    fill="none" stroke="#D9D4C8" stroke-width="1"/>
+          <polygon points="160,76 204,100 204,148 160,172 116,148 116,100" fill="none" stroke="#D9D4C8" stroke-width="1"/>
+          <polygon points="160,102 182,114 182,134 160,146 138,134 138,114" fill="none" stroke="#D9D4C8" stroke-width="1"/>
           <!-- Spokes -->
-          <line x1="160" y1="24"  x2="160" y2="232" stroke="#E7E5E4" stroke-width="1"/>
-          <line x1="248" y1="76"  x2="72"  y2="180" stroke="#E7E5E4" stroke-width="1"/>
-          <line x1="248" y1="180" x2="72"  y2="76"  stroke="#E7E5E4" stroke-width="1"/>
+          <line x1="160" y1="24"  x2="160" y2="232" stroke="#D9D4C8" stroke-width="1"/>
+          <line x1="248" y1="76"  x2="72"  y2="180" stroke="#D9D4C8" stroke-width="1"/>
+          <line x1="248" y1="180" x2="72"  y2="76"  stroke="#D9D4C8" stroke-width="1"/>
           <!-- Data shape (Gov 28, Security 32, DataModel 55, Reports 61, Adoption 74, Performance 80) -->
           <polygon
             points="160,130 196,107 206,148 160,174 114,148 124,107"
-            fill="rgba(217,119,6,0.12)" stroke="#D97706" stroke-width="2" stroke-linejoin="round"/>
+            fill="rgba(42,95,143,0.12)" stroke="#2A5F8F" stroke-width="2" stroke-linejoin="round"/>
           <!-- Labels -->
-          <text x="160" y="15"  text-anchor="middle" font-family="'Source Sans 3',sans-serif" font-size="11" fill="#78716C">Governance</text>
-          <text x="255" y="74"  text-anchor="start"  font-family="'Source Sans 3',sans-serif" font-size="11" fill="#78716C">Security</text>
-          <text x="255" y="185" text-anchor="start"  font-family="'Source Sans 3',sans-serif" font-size="11" fill="#78716C">Data model</text>
-          <text x="160" y="249" text-anchor="middle" font-family="'Source Sans 3',sans-serif" font-size="11" fill="#78716C">Reports</text>
-          <text x="65"  y="185" text-anchor="end"    font-family="'Source Sans 3',sans-serif" font-size="11" fill="#78716C">Adoption</text>
-          <text x="65"  y="74"  text-anchor="end"    font-family="'Source Sans 3',sans-serif" font-size="11" fill="#78716C">Performance</text>
+          <text x="160" y="15"  text-anchor="middle" font-family="'Source Sans 3',sans-serif" font-size="11" fill="#6A7E90">Governance</text>
+          <text x="255" y="74"  text-anchor="start"  font-family="'Source Sans 3',sans-serif" font-size="11" fill="#6A7E90">Security</text>
+          <text x="255" y="185" text-anchor="start"  font-family="'Source Sans 3',sans-serif" font-size="11" fill="#6A7E90">Data model</text>
+          <text x="160" y="249" text-anchor="middle" font-family="'Source Sans 3',sans-serif" font-size="11" fill="#6A7E90">Reports</text>
+          <text x="65"  y="185" text-anchor="end"    font-family="'Source Sans 3',sans-serif" font-size="11" fill="#6A7E90">Adoption</text>
+          <text x="65"  y="74"  text-anchor="end"    font-family="'Source Sans 3',sans-serif" font-size="11" fill="#6A7E90">Performance</text>
         </svg>
       </div>
 

@@ -44,14 +44,14 @@
     </style>
     <style>
         :root {
-            --primary: #D97706;
-            --primary-dark: #92400E;
-            --primary-light: rgba(217,119,6,0.08);
-            --bg: #FAF7F5;
+            --primary: #2A5F8F;
+            --primary-dark: #1A3D5C;
+            --primary-light: rgba(42,95,143,0.08);
+            --bg: #F4F1EB;
             --card: #ffffff;
-            --text: #1C1917;
-            --text-secondary: #78716C;
-            --border: #E7E5E4;
+            --text: #2A3A4A;
+            --text-secondary: #6A7E90;
+            --border: #D9D4C8;
             --success: #16A34A;
             --success-bg: #f0fdf4;
             --warning: #CA8A04;
@@ -80,7 +80,7 @@
 
         /* Header */
         .app-header {
-            background: #1C1917;
+            background: #1A3D5C;
             color: white;
             padding: 32px 24px;
             border-radius: var(--radius);
@@ -144,7 +144,7 @@
 
         .progress-bar-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--primary), #EA580C);
+            background: linear-gradient(90deg, var(--primary), #5B8DB8);
             border-radius: 4px;
             transition: width 0.4s ease;
             width: 0%;
@@ -222,14 +222,14 @@
         }
 
         .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: var(--shadow-lg); }
-        .btn-primary:disabled { background: #d4a574; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-primary:disabled { background: #8FB5D4; cursor: not-allowed; transform: none; box-shadow: none; }
 
         .btn-secondary {
             background: var(--primary-light);
             color: var(--primary);
         }
 
-        .btn-secondary:hover { background: rgba(217,119,6,0.15); }
+        .btn-secondary:hover { background: rgba(42,95,143,0.15); }
 
         .btn-success {
             background: var(--success);
@@ -503,8 +503,8 @@
 
         /* GDPR consent block */
         .gdpr-notice {
-            background: #f9f5f0;
-            border: 1px solid #e0d4c3;
+            background: #f0f4f8;
+            border: 1px solid #c8d9e8;
             border-radius: 8px;
             padding: 16px 20px;
             margin-bottom: 20px;
@@ -974,7 +974,7 @@
         }
 
         .bar-fill--red { background: linear-gradient(90deg, #DC2626, #ef4444); }
-        .bar-fill--amber { background: linear-gradient(90deg, #CA8A04, #D97706); }
+        .bar-fill--amber { background: linear-gradient(90deg, #CA8A04, #D4901A); }
         .bar-fill--green { background: linear-gradient(90deg, #16A34A, #22c55e); }
 
         .bar-value--red { color: #DC2626; }
@@ -1030,7 +1030,7 @@
             top: 0; left: 0; right: 0; bottom: 0;
             overflow-y: auto;
             z-index: 200;
-            background: #FAF7F5;
+            background: #F4F1EB;
             padding: 0;
             border-radius: 0;
         }
@@ -1038,16 +1038,16 @@
         .rpt-container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
 
         /* Nav */
-        .rpt-nav { background: #1C1917; padding: 16px 0; display: flex; align-items: center; position: sticky; top: 0; z-index: 10; }
+        .rpt-nav { background: #1A3D5C; padding: 16px 0; display: flex; align-items: center; position: sticky; top: 0; z-index: 10; }
         .rpt-nav__inner { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; }
         .rpt-nav__logo { font-family: 'Playfair Display', Georgia, serif; font-size: 1.1rem; color: #fff; text-decoration: none; }
         .rpt-nav__label { font-size: 0.78rem; color: rgba(255,255,255,0.4); letter-spacing: 0.02em; }
-        .rpt-nav__restart-btn { font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 0.82rem; font-weight: 600; color: #1C1917; background: #D97706; border: none; border-radius: 100px; padding: 8px 20px; cursor: pointer; white-space: nowrap; }
-        .rpt-nav__restart-btn:hover { background: #EA580C; }
+        .rpt-nav__restart-btn { font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 0.82rem; font-weight: 600; color: #fff; background: #2A5F8F; border: none; border-radius: 100px; padding: 8px 20px; cursor: pointer; white-space: nowrap; }
+        .rpt-nav__restart-btn:hover { background: #5B8DB8; }
 
         /* Header */
-        .rpt-header { background: #1C1917; padding: 52px 0 44px; }
-        .rpt-header__eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #D97706; margin-bottom: 12px; }
+        .rpt-header { background: #1A3D5C; padding: 52px 0 44px; }
+        .rpt-header__eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #2A5F8F; margin-bottom: 12px; }
         .rpt-header__title { font-family: 'Playfair Display', Georgia, serif; font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 700; color: #fff; line-height: 1.15; margin-bottom: 12px; }
         .rpt-header__sub { font-size: 1rem; color: rgba(255,255,255,0.65); margin-bottom: 6px; }
         .rpt-header__meta { font-size: 0.82rem; color: rgba(255,255,255,0.35); }
@@ -1055,13 +1055,13 @@
         /* Sections */
         .rpt-section { padding: 52px 0; }
         .rpt-section--white { background: #fff; }
-        .rpt-section--warm  { background: #FAF7F5; }
-        .rpt-section__title { font-family: 'Playfair Display', Georgia, serif; font-size: 1.5rem; font-weight: 700; color: #1C1917; padding-bottom: 14px; border-bottom: 2px solid #D97706; margin-bottom: 28px; display: inline-block; }
+        .rpt-section--warm  { background: #F4F1EB; }
+        .rpt-section__title { font-family: 'Playfair Display', Georgia, serif; font-size: 1.5rem; font-weight: 700; color: #1A3D5C; padding-bottom: 14px; border-bottom: 2px solid #2A5F8F; margin-bottom: 28px; display: inline-block; }
 
         /* Client bar */
-        .rpt-client-bar { background: #FAF7F5; border: 1px solid #E7E5E4; border-radius: 8px; padding: 18px 22px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
-        .rpt-client-bar__name { font-family: 'Playfair Display', Georgia, serif; font-size: 1.15rem; font-weight: 700; color: #1C1917; margin-bottom: 3px; }
-        .rpt-client-bar__meta { font-size: 0.875rem; color: #78716C; }
+        .rpt-client-bar { background: #F4F1EB; border: 1px solid #D9D4C8; border-radius: 8px; padding: 18px 22px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+        .rpt-client-bar__name { font-family: 'Playfair Display', Georgia, serif; font-size: 1.15rem; font-weight: 700; color: #1A3D5C; margin-bottom: 3px; }
+        .rpt-client-bar__meta { font-size: 0.875rem; color: #6A7E90; }
 
         /* Risk pill */
         .rpt-risk-pill { display: inline-flex; align-items: center; gap: 7px; padding: 6px 14px; border-radius: 100px; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; flex-shrink: 0; }
@@ -1075,40 +1075,40 @@
 
         /* KPI grid */
         .rpt-kpi-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 36px; }
-        .rpt-kpi-card { background: #fff; border: 1px solid #E7E5E4; border-radius: 8px; padding: 20px 22px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-        .rpt-kpi-card__label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #78716C; margin-bottom: 10px; }
+        .rpt-kpi-card { background: #fff; border: 1px solid #D9D4C8; border-radius: 8px; padding: 20px 22px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+        .rpt-kpi-card__label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #6A7E90; margin-bottom: 10px; }
         .rpt-kpi-card__value { font-family: 'Playfair Display', Georgia, serif; font-size: 2rem; font-weight: 700; line-height: 1; margin-bottom: 5px; }
-        .rpt-kpi-card__sub { font-size: 0.77rem; color: #78716C; }
+        .rpt-kpi-card__sub { font-size: 0.77rem; color: #6A7E90; }
         .rpt-kpi-card__value--amber { color: #CA8A04; }
         .rpt-kpi-card__value--red   { color: #DC2626; }
         .rpt-kpi-card__value--green { color: #16A34A; }
 
         /* Top risks */
-        .rpt-risks-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #78716C; margin-bottom: 12px; }
-        .rpt-risk-item { background: #fff; border: 1px solid #E7E5E4; border-left-width: 4px; border-radius: 8px; padding: 16px 18px; display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center; margin-bottom: 10px; }
+        .rpt-risks-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #6A7E90; margin-bottom: 12px; }
+        .rpt-risk-item { background: #fff; border: 1px solid #D9D4C8; border-left-width: 4px; border-radius: 8px; padding: 16px 18px; display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center; margin-bottom: 10px; }
         .rpt-risk-item--critical { border-left-color: #DC2626; }
         .rpt-risk-item--high     { border-left-color: #CA8A04; }
         .rpt-risk-item__left { display: flex; align-items: flex-start; gap: 14px; }
         .rpt-risk-item__num { font-family: 'Playfair Display', Georgia, serif; font-size: 1.5rem; font-weight: 700; line-height: 1; min-width: 28px; flex-shrink: 0; }
         .rpt-risk-item--critical .rpt-risk-item__num { color: rgba(220,38,38,0.2); }
         .rpt-risk-item--high     .rpt-risk-item__num { color: rgba(202,138,4,0.25); }
-        .rpt-risk-item__title { font-size: 0.92rem; font-weight: 700; color: #1C1917; margin-bottom: 4px; }
-        .rpt-risk-item__desc  { font-size: 0.85rem; color: #78716C; line-height: 1.5; }
+        .rpt-risk-item__title { font-size: 0.92rem; font-weight: 700; color: #1A3D5C; margin-bottom: 4px; }
+        .rpt-risk-item__desc  { font-size: 0.85rem; color: #6A7E90; line-height: 1.5; }
         .rpt-risk-item__cost  { text-align: right; white-space: nowrap; }
         .rpt-risk-item__amount { font-family: 'Playfair Display', Georgia, serif; font-size: 1.1rem; font-weight: 700; color: #DC2626; }
         .rpt-risk-item--high .rpt-risk-item__amount { color: #CA8A04; }
-        .rpt-risk-item__per   { font-size: 0.72rem; color: #78716C; margin-top: 2px; }
+        .rpt-risk-item__per   { font-size: 0.72rem; color: #6A7E90; margin-top: 2px; }
 
         /* Scorecard charts */
         .rpt-charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-        .rpt-chart-card { background: #fff; border: 1px solid #E7E5E4; border-radius: 8px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-        .rpt-chart-card__title { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #78716C; margin-bottom: 24px; }
+        .rpt-chart-card { background: #fff; border: 1px solid #D9D4C8; border-radius: 8px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+        .rpt-chart-card__title { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #6A7E90; margin-bottom: 24px; }
 
         /* Bar chart */
         .rpt-bar-list { display: flex; flex-direction: column; gap: 13px; }
         .rpt-bar-row  { display: flex; align-items: center; gap: 10px; }
-        .rpt-bar-label { font-size: 0.79rem; color: #78716C; text-align: right; width: 164px; flex-shrink: 0; line-height: 1.3; }
-        .rpt-bar-track { flex: 1; height: 8px; background: #E7E5E4; border-radius: 100px; overflow: hidden; }
+        .rpt-bar-label { font-size: 0.79rem; color: #6A7E90; text-align: right; width: 164px; flex-shrink: 0; line-height: 1.3; }
+        .rpt-bar-track { flex: 1; height: 8px; background: #D9D4C8; border-radius: 100px; overflow: hidden; }
         .rpt-bar-fill  { height: 100%; border-radius: 100px; }
         .rpt-bar-fill--red   { background: #DC2626; }
         .rpt-bar-fill--amber { background: #CA8A04; }
@@ -1119,10 +1119,10 @@
         .rpt-bar-score--green { color: #16A34A; }
 
         /* Subcategory table */
-        .rpt-table-card { background: #fff; border: 1px solid #E7E5E4; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+        .rpt-table-card { background: #fff; border: 1px solid #D9D4C8; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
         .rpt-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-        .rpt-table th { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #78716C; background: #FAF7F5; padding: 12px 16px; text-align: left; border-bottom: 1px solid #E7E5E4; }
-        .rpt-table td { padding: 11px 16px; border-bottom: 1px solid #E7E5E4; color: #44403C; vertical-align: middle; }
+        .rpt-table th { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #6A7E90; background: #F4F1EB; padding: 12px 16px; text-align: left; border-bottom: 1px solid #D9D4C8; }
+        .rpt-table td { padding: 11px 16px; border-bottom: 1px solid #D9D4C8; color: #2A3A4A; vertical-align: middle; }
         .rpt-table tbody tr:last-child td { border-bottom: none; }
         .rpt-table tbody tr:hover td { background: rgba(250,247,245,0.6); }
         .rpt-badge { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
@@ -1136,15 +1136,15 @@
 
         /* CTA */
         .rpt-cta-wrap { max-width: 660px; margin: 0 auto; }
-        .rpt-cta-box  { border: 2px solid #D97706; border-radius: 8px; background: rgba(217,119,6,0.04); padding: 40px 48px; text-align: center; }
-        .rpt-cta-box h2 { font-family: 'Playfair Display', Georgia, serif; font-size: 1.7rem; font-weight: 700; color: #1C1917; margin-bottom: 14px; }
-        .rpt-cta-box p  { font-size: 0.97rem; color: #44403C; line-height: 1.65; margin-bottom: 26px; }
-        .rpt-cta-note   { font-size: 0.82rem; font-style: italic; color: #78716C; line-height: 1.6; margin-top: 16px; display: block; }
-        .rpt-cta-btn    { display: inline-block; background: #D97706; color: #fff; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 0.95rem; font-weight: 600; padding: 14px 32px; border-radius: 100px; text-decoration: none; }
-        .rpt-cta-btn:hover { background: #92400E; }
+        .rpt-cta-box  { border: 2px solid #2A5F8F; border-radius: 8px; background: rgba(42,95,143,0.04); padding: 40px 48px; text-align: center; }
+        .rpt-cta-box h2 { font-family: 'Playfair Display', Georgia, serif; font-size: 1.7rem; font-weight: 700; color: #1A3D5C; margin-bottom: 14px; }
+        .rpt-cta-box p  { font-size: 0.97rem; color: #2A3A4A; line-height: 1.65; margin-bottom: 26px; }
+        .rpt-cta-note   { font-size: 0.82rem; font-style: italic; color: #6A7E90; line-height: 1.6; margin-top: 16px; display: block; }
+        .rpt-cta-btn    { display: inline-block; background: #2A5F8F; color: #fff; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 0.95rem; font-weight: 600; padding: 14px 32px; border-radius: 100px; text-decoration: none; }
+        .rpt-cta-btn:hover { background: #1A3D5C; }
 
         /* Footer */
-        .rpt-footer { background: #1C1917; padding: 44px 0 36px; text-align: center; }
+        .rpt-footer { background: #1A3D5C; padding: 44px 0 36px; text-align: center; }
         .rpt-footer__name    { font-family: 'Playfair Display', Georgia, serif; font-size: 1.1rem; color: #fff; margin-bottom: 6px; }
         .rpt-footer__tagline { font-size: 0.82rem; color: rgba(255,255,255,0.4); margin-bottom: 16px; }
         .rpt-footer__legal   { font-size: 0.75rem; color: rgba(255,255,255,0.25); line-height: 1.65; }
@@ -1170,12 +1170,12 @@
                 @bottom-center {
                     content: counter(page) " / " counter(pages);
                     font-size: 8pt;
-                    color: #78716C;
+                    color: #6A7E90;
                     font-family: 'Source Sans 3', system-ui, sans-serif;
                 }
             }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            body, body.report-mode { overflow: visible !important; background: #FAF7F5 !important; }
+            body, body.report-mode { overflow: visible !important; background: #F4F1EB !important; }
             body.report-mode #screen-thankyou.active {
                 position: static !important;
                 overflow: visible !important;
@@ -2396,11 +2396,11 @@ function buildReport() {
         // CoE top → centred; BI Ops bottom-right → start; Reporting bottom-left → end
         const anchors = ["middle", "start", "end"];
         return `<svg viewBox="0 0 390 300" width="100%" style="display:block;margin:0 auto;">
-            ${[1, 0.75, 0.5, 0.25].map(f => `<polygon points="${ring(f)}" fill="none" stroke="#E7E5E4" stroke-width="1"/>`).join("")}
-            ${order.map((_, i) => { const [tx,ty] = pt(maxR,i); return `<line x1="${cx}" y1="${cy}" x2="${tx.toFixed(1)}" y2="${ty.toFixed(1)}" stroke="#E7E5E4" stroke-width="1"/>`; }).join("")}
-            <polygon points="${dataPts}" fill="rgba(217,119,6,0.12)" stroke="#D97706" stroke-width="2" stroke-linejoin="round"/>
+            ${[1, 0.75, 0.5, 0.25].map(f => `<polygon points="${ring(f)}" fill="none" stroke="#D9D4C8" stroke-width="1"/>`).join("")}
+            ${order.map((_, i) => { const [tx,ty] = pt(maxR,i); return `<line x1="${cx}" y1="${cy}" x2="${tx.toFixed(1)}" y2="${ty.toFixed(1)}" stroke="#D9D4C8" stroke-width="1"/>`; }).join("")}
+            <polygon points="${dataPts}" fill="rgba(42,95,143,0.12)" stroke="#2A5F8F" stroke-width="2" stroke-linejoin="round"/>
             ${order.map((p, i) => { const s = (pillarScores.find(x => x.name === p) || {}).pct || 0; const [dx,dy] = pt(maxR * s / 100, i); return `<circle cx="${dx.toFixed(1)}" cy="${dy.toFixed(1)}" r="4" fill="${colHex(s)}"/>`; }).join("")}
-            ${order.map((p, i) => { const [lx,ly] = pt(labelR, i); return `<text x="${lx.toFixed(1)}" y="${(ly+5).toFixed(1)}" text-anchor="${anchors[i]}" font-family="'Source Sans 3',sans-serif" font-size="13" font-weight="600" fill="#78716C">${p}</text>`; }).join("")}
+            ${order.map((p, i) => { const [lx,ly] = pt(labelR, i); return `<text x="${lx.toFixed(1)}" y="${(ly+5).toFixed(1)}" text-anchor="${anchors[i]}" font-family="'Source Sans 3',sans-serif" font-size="13" font-weight="600" fill="#6A7E90">${p}</text>`; }).join("")}
         </svg>`;
     }
 
@@ -2439,8 +2439,8 @@ function buildReport() {
             .map(r => {
                 const col = colClass(r.pct);
                 return `<tr>
-                    <td style="color:#78716C;font-size:0.82rem;padding-left:20px">${r.pillar}</td>
-                    <td style="font-weight:500;color:#1C1917">${r.subcategory}</td>
+                    <td style="color:#6A7E90;font-size:0.82rem;padding-left:20px">${r.pillar}</td>
+                    <td style="font-weight:500;color:#1A3D5C">${r.subcategory}</td>
                     <td style="text-align:center"><span class="rpt-badge ${bdgCls(r.priority)}">${bdgTxt(r.priority)}</span></td>
                     <td style="text-align:right"><span class="rpt-score-cell rpt-score-cell--${col}">${r.pct}</span></td>
                 </tr>`;
@@ -2450,7 +2450,7 @@ function buildReport() {
     // Top 3 risks
     function buildTop3() {
         const top3 = riskItems.slice(0, 3);
-        if (!top3.length) return `<p style="color:#78716C;font-style:italic">No significant risks identified — great work!</p>`;
+        if (!top3.length) return `<p style="color:#6A7E90;font-style:italic">No significant risks identified — great work!</p>`;
         return top3.map((r, i) => {
             const crit = r.priority === "Fix now";
             return `<div class="rpt-risk-item ${crit ? "rpt-risk-item--critical" : "rpt-risk-item--high"}">
