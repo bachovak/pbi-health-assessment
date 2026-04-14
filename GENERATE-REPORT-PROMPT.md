@@ -66,7 +66,7 @@ Build the following sections in order:
    - Eyebrow: "Power BI Health Check" in primary amber, all caps, small
    - H1: "Your Results, [ClientName]" in white Playfair Display
    - Subtitle: "[Company] · [CompanySize] employees · [NumPBIUsers] Power BI users"
-   - Meta line: "Assessment completed [Timestamp] · Prepared by Kristina Bachová"
+   - Meta line: "Assessment completed [Timestamp] · Prepared by Kristína Bachová"
 
 3. **Executive summary section** — white background. Contains in order:
    a) Client bar — off-white card showing company name (Playfair), meta line
@@ -119,7 +119,7 @@ Build the following sections in order:
      including effort estimates, recommended fixes, and a prioritised action
      plan — is delivered as part of the Health Check engagement."
 
-6. **Footer** — dark background. Centred. Name "Kristina Bachová" in white
+6. **Footer** — dark background. Centred. Name "Kristína Bachová" in white
    Playfair, tagline "Independent Power BI Consultant · Algarve, Portugal" in
    muted, copyright line:
    "This report is confidential and prepared exclusively for [ClientName] at
